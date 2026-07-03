@@ -1,9 +1,9 @@
 #requires -Modules Pester
-# Pester 5+ unit tests for the Kritical.Pax8Mcp banner functions.
+# Pester 5+ unit tests for the Kritical.PS.Pax8Mcp banner functions.
 # Author: Joshua Finley - Kritical Pty Ltd
 
 BeforeAll {
-    $modPath = Join-Path $PSScriptRoot '..\..\src\Kritical.Pax8Mcp.psd1'
+    $modPath = Join-Path $PSScriptRoot '..\..\src\Kritical.PS.Pax8Mcp.psd1'
     Import-Module $modPath -Force
 }
 

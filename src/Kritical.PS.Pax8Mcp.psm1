@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Kritical.Pax8Mcp — Kritical Pax8 MCP wiring toolkit for Claude Code, Codex,
+    Kritical.PS.Pax8Mcp — Kritical Pax8 MCP wiring toolkit for Claude Code, Codex,
     Cursor and any other MCP-aware agent.
 
 .DESCRIPTION

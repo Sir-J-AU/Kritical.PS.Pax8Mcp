@@ -1,7 +1,7 @@
 function Clear-KriticalPax8IngestedLogs {
     <#
     .SYNOPSIS
-        Cleans up Kritical.Pax8Mcp test-output, wave-receipt and run-log files that
+        Cleans up Kritical.PS.Pax8Mcp test-output, wave-receipt and run-log files that
         have been ingested into a downstream sink (Application Insights / PaxBrain
         SQL / OneDrive cold archive). Files NOT yet ingested are preserved.
 
@@ -13,7 +13,7 @@ function Clear-KriticalPax8IngestedLogs {
             - UNKNOWN   -> keep (default-safe — never delete without proof)
 
         Default sinks scanned:
-            * $env:LOCALAPPDATA\Kritical\Kritical.Pax8Mcp\test-output
+            * $env:LOCALAPPDATA\Kritical\Kritical.PS.Pax8Mcp\test-output
             * <repo>\tests\output   (legacy — only swept if -IncludeRepoTestOutput)
             * Any -ExtraPath the operator passes
 
@@ -63,7 +63,7 @@ function Clear-KriticalPax8IngestedLogs {
 
     # Build scan paths
     $paths = [System.Collections.Generic.List[string]]::new()
-    $defaultOut = Join-Path $env:LOCALAPPDATA 'Kritical\Kritical.Pax8Mcp\test-output'
+    $defaultOut = Join-Path $env:LOCALAPPDATA 'Kritical\Kritical.PS.Pax8Mcp\test-output'
     if (Test-Path -LiteralPath $defaultOut) { $paths.Add($defaultOut) }
     if ($IncludeRepoTestOutput.IsPresent) {
         $repoOut = Join-Path (Split-Path -Parent (Split-Path -Parent $PSCommandPath)) 'tests\output'

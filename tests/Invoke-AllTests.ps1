@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Kritical.Pax8Mcp full test runner. Runs Pester 5+ unit tests then live e2e
+    Kritical.PS.Pax8Mcp full test runner. Runs Pester 5+ unit tests then live e2e
     against mcp.pax8.com (skipped if secrets folder absent).
 
 .DESCRIPTION
@@ -21,7 +21,7 @@ $ErrorActionPreference = 'Stop'
 
 $here = Split-Path -Parent $PSCommandPath
 $repo = Split-Path -Parent $here
-Import-Module (Join-Path $repo 'src\Kritical.Pax8Mcp.psd1') -Force
+Import-Module (Join-Path $repo 'src\Kritical.PS.Pax8Mcp.psd1') -Force
 
 if (-not $NoBanner.IsPresent) { Write-KriticalPax8Banner -Title 'Test Runner' }
 
@@ -36,7 +36,7 @@ Import-Module Pester -MinimumVersion 5.5.0 -Force
 # Default test output OUT of the repo so artefacts never accidentally commit.
 # Override with -OutputDir for CI / explicit collection.
 if (-not $OutputDir) {
-    $OutputDir = Join-Path $env:LOCALAPPDATA 'Kritical\Kritical.Pax8Mcp\test-output'
+    $OutputDir = Join-Path $env:LOCALAPPDATA 'Kritical\Kritical.PS.Pax8Mcp\test-output'
 }
 $outDir = $OutputDir
 New-Item -ItemType Directory -Path $outDir -Force | Out-Null

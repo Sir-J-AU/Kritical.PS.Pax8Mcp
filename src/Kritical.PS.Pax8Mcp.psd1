@@ -1,5 +1,5 @@
 @{
-    RootModule        = 'Kritical.Pax8Mcp.psm1'
+    RootModule        = 'Kritical.PS.Pax8Mcp.psm1'
     ModuleVersion     = '1.0.0'
     GUID              = 'a5f8e4c2-6b3d-4a1e-9c7f-2d8b5e0a3f1c'
     Author            = 'Joshua Finley'

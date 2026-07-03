@@ -2,9 +2,9 @@
 # Author: Joshua Finley - Kritical Pty Ltd
 
 BeforeAll {
-    $modPath = Join-Path $PSScriptRoot '..\..\src\Kritical.Pax8Mcp.psd1'
+    $modPath = Join-Path $PSScriptRoot '..\..\src\Kritical.PS.Pax8Mcp.psd1'
     Import-Module $modPath -Force
-    $script:Mod = Get-Module Kritical.Pax8Mcp
+    $script:Mod = Get-Module Kritical.PS.Pax8Mcp
     $script:TempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("krit-pax8-agt-" + [guid]::NewGuid())
     New-Item -ItemType Directory -Path $script:TempDir | Out-Null
 }

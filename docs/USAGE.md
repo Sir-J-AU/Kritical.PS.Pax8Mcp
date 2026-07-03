@@ -1,4 +1,4 @@
-# Kritical.Pax8Mcp — Detailed Usage Guide
+# Kritical.PS.Pax8Mcp — Detailed Usage Guide
 
 ```text
 ·· × × × ···  SirJ's Deaddrop  ··· × × × ···
@@ -79,8 +79,8 @@ If the token file isn't present, mint one:
 
 ```powershell
 # Step 1: load the module
-$root = "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp"
-Import-Module "$root\src\Kritical.Pax8Mcp.psd1" -Force
+$root = "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.PS.Pax8Mcp"
+Import-Module "$root\src\Kritical.PS.Pax8Mcp.psd1" -Force
 
 # Step 2: confirm token is in place
 Test-Path "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github-SecretsOutsideOfGitRepos\pax8-mcpServer-auth.txt"
@@ -160,8 +160,8 @@ Brand-banner helpers. Use anywhere a script needs the canonical Kritical banner.
 ### Proof 1 — OAuth metadata reachable
 
 ```powershell
-Import-Module "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp\src\Kritical.Pax8Mcp.psd1" -Force
-$mod = Get-Module Kritical.Pax8Mcp
+Import-Module "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.PS.Pax8Mcp\src\Kritical.PS.Pax8Mcp.psd1" -Force
+$mod = Get-Module Kritical.PS.Pax8Mcp
 & $mod { Test-KriticalPax8McpOAuthDiscovery } | Format-List
 # Issuer                : https://mcp.pax8.com/v1
 # AuthorizeEndpoint     : https://mcp.pax8.com/v1/authorize

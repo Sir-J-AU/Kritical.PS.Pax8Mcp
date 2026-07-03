@@ -1,15 +1,15 @@
 <#
 .SYNOPSIS
-    Publish Kritical.Pax8Mcp to PSGallery via the canonical Kritical secrets pattern.
+    Publish Kritical.PS.Pax8Mcp to PSGallery via the canonical Kritical secrets pattern.
     Stages to a properly-named folder, reads API key from secrets folder, validates
     manifest, dry-runs via Test-ModuleManifest, then publishes.
 
 .DESCRIPTION
     PSGallery's Publish-Module requires the containing folder to share the module
-    name. Our repo has src\Kritical.Pax8Mcp.psd1 (folder=src). This helper:
+    name. Our repo has src\Kritical.PS.Pax8Mcp.psd1 (folder=src). This helper:
 
       1. Confirms the API key file exists in the Kritical secrets folder.
-      2. Stages the module into %LOCALAPPDATA%\Kritical\Kritical.Pax8Mcp\publish-staging\Kritical.Pax8Mcp\
+      2. Stages the module into %LOCALAPPDATA%\Kritical\Kritical.PS.Pax8Mcp\publish-staging\Kritical.PS.Pax8Mcp\
          (out of any repo).
       3. Validates the staged manifest.
       4. Reads the API key into a local var (never echoed).
@@ -32,7 +32,7 @@
 [OutputType([pscustomobject])]
 param(
     [string] $ApiKeyFile,
-    [string] $ModuleName = 'Kritical.Pax8Mcp',
+    [string] $ModuleName = 'Kritical.PS.Pax8Mcp',
     [string] $RepoRoot,
     [switch] $SkipManifestTest,
     [switch] $SkipTests,         # default: run full Pester unit + e2e suite before publish
@@ -60,7 +60,7 @@ if (-not $NoBanner.IsPresent) {
     if (-not (Test-Path -LiteralPath $logo)) { $logo = Join-Path $srcDir 'Assets\kritical-logo.txt' }
     if (Test-Path -LiteralPath $logo) {
         Write-Host (Get-Content -LiteralPath $logo -Raw) -ForegroundColor DarkCyan
-        Write-Host '--- Publish Kritical.Pax8Mcp to PSGallery ---' -ForegroundColor Yellow
+        Write-Host '--- Publish Kritical.PS.Pax8Mcp to PSGallery ---' -ForegroundColor Yellow
     }
 }
 

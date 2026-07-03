@@ -1,4 +1,4 @@
-# Kritical.Pax8Mcp — Kritical Pax8 MCP Toolkit
+# Kritical.PS.Pax8Mcp — Kritical Pax8 MCP Toolkit
 
 ```text
 ·· × × × ···  SirJ's Deaddrop  ··· × × × ···
@@ -74,27 +74,27 @@ Both Pax8 MCP auth paths are supported and can coexist:
 ### Option A — Local development install
 
 ```powershell
-$src = "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp\src"
-Import-Module "$src\Kritical.Pax8Mcp.psd1" -Force
+$src = "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.PS.Pax8Mcp\src"
+Import-Module "$src\Kritical.PS.Pax8Mcp.psd1" -Force
 ```
 
 ### Option B — GitHub release (private repo today)
 
 ```powershell
 # 1. Download the bundle
-$zip = Join-Path $env:TEMP 'Kritical.Pax8Mcp-1.0.0.zip'
-gh release download v1.0.0 -R Sir-J-AU/Kritical.Pax8Mcp -p '*.zip' -D $env:TEMP --clobber
+$zip = Join-Path $env:TEMP 'Kritical.PS.Pax8Mcp-1.0.0.zip'
+gh release download v1.0.0 -R Sir-J-AU/Kritical.PS.Pax8Mcp -p '*.zip' -D $env:TEMP --clobber
 
 # 2. Resolve the correct PSModulePath entry (handles OneDrive-mapped Documents)
 $psMod = ($env:PSModulePath -split ';' |
           Where-Object { $_ -match 'Documents\\PowerShell\\Modules$' } |
           Select-Object -First 1)
-$instDir = Join-Path $psMod 'Kritical.Pax8Mcp\1.0.0'
+$instDir = Join-Path $psMod 'Kritical.PS.Pax8Mcp\1.0.0'
 
 # 3. Install + import + verify
 if (Test-Path -LiteralPath $instDir) { Remove-Item -LiteralPath (Split-Path $instDir -Parent) -Recurse -Force }
 Expand-Archive -LiteralPath $zip -DestinationPath $instDir -Force
-Import-Module Kritical.Pax8Mcp -Force
+Import-Module Kritical.PS.Pax8Mcp -Force
 Test-KriticalPax8Secrets   # preflight — refuses if secrets folder isn't ready
 Test-KriticalPax8Mcp       # 7-gate health probe
 ```
@@ -102,8 +102,8 @@ Test-KriticalPax8Mcp       # 7-gate health probe
 ### Option C — PSGallery (once published)
 
 ```powershell
-Install-Module Kritical.Pax8Mcp -Scope CurrentUser
-Import-Module  Kritical.Pax8Mcp -Force
+Install-Module Kritical.PS.Pax8Mcp -Scope CurrentUser
+Import-Module  Kritical.PS.Pax8Mcp -Force
 ```
 
 ---
@@ -251,7 +251,7 @@ url = "https://mcp.pax8.com/v1/mcp"
 ### Unit
 
 ```powershell
-cd "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp"
+cd "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.PS.Pax8Mcp"
 .\tests\Invoke-AllTests.ps1 -SkipE2E
 ```
 
@@ -282,9 +282,9 @@ Covers:
 
 See [docs/PUBLISHING.md](docs/PUBLISHING.md). High level:
 
-1. Bump `ModuleVersion` in `src/Kritical.Pax8Mcp.psd1`.
+1. Bump `ModuleVersion` in `src/Kritical.PS.Pax8Mcp.psd1`.
 2. Run the full test suite green: `.\tests\Invoke-AllTests.ps1`.
-3. `Test-ModuleManifest src\Kritical.Pax8Mcp.psd1`.
+3. `Test-ModuleManifest src\Kritical.PS.Pax8Mcp.psd1`.
 4. `Publish-Module -Path src -NuGetApiKey <psgallery-key>`.
 
 ---
@@ -292,7 +292,7 @@ See [docs/PUBLISHING.md](docs/PUBLISHING.md). High level:
 ## Files
 
 ```text
-Kritical.Pax8Mcp/
+Kritical.PS.Pax8Mcp/
 ├── README.md                                    ← this file
 ├── LICENSE
 ├── CONTRIBUTING.md
@@ -301,8 +301,8 @@ Kritical.Pax8Mcp/
 │   ├── USAGE.md
 │   └── ARCHITECTURE.md
 ├── src/
-│   ├── Kritical.Pax8Mcp.psd1                        ← module manifest (Author = Joshua Finley)
-│   ├── Kritical.Pax8Mcp.psm1                        ← root module
+│   ├── Kritical.PS.Pax8Mcp.psd1                        ← module manifest (Author = Joshua Finley)
+│   ├── Kritical.PS.Pax8Mcp.psm1                        ← root module
 │   ├── Assets/
 │   │   └── kritical-logo.txt                    ← canonical banner (verbatim)
 │   ├── Private/

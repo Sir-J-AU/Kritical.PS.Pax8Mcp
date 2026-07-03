@@ -1,4 +1,4 @@
-# Kritical.Pax8Mcp — Architecture
+# Kritical.PS.Pax8Mcp — Architecture
 
 ```text
 ·· × × × ···  SirJ's Deaddrop  ··· × × × ···
@@ -32,8 +32,8 @@ flowchart TB
 |---|---|---|
 | **Public** | `src/Public/*.ps1` | Operator entry points. Comment-based help. Banner-emitting. Returns structured PSCustomObjects. |
 | **Private** | `src/Private/*.ps1` | Internal primitives. Dot-sourced by the root module. Not exported. |
-| **Manifest** | `src/Kritical.Pax8Mcp.psd1` | Module metadata: Author, Company, Version, FunctionsToExport. |
-| **Root** | `src/Kritical.Pax8Mcp.psm1` | Dot-sources Private then Public; exports the public functions. |
+| **Manifest** | `src/Kritical.PS.Pax8Mcp.psd1` | Module metadata: Author, Company, Version, FunctionsToExport. |
+| **Root** | `src/Kritical.PS.Pax8Mcp.psm1` | Dot-sources Private then Public; exports the public functions. |
 | **Assets** | `src/Assets/kritical-logo.txt` | Bundled fallback copy of the canonical Kritical banner. |
 | **Tests** | `tests/` | Pester unit + e2e + the runner. |
 

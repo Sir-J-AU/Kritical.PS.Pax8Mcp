@@ -1,4 +1,4 @@
-function Test-KritPax8Mcp {
+function Test-KriticalPax8Mcp {
     <#
     .SYNOPSIS
         Comprehensive health probe for the Pax8 MCP toolkit on this machine.
@@ -15,10 +15,10 @@ function Test-KritPax8Mcp {
             G7 - The wired entry passes a token-header probe
 
     .EXAMPLE
-        Test-KritPax8Mcp
+        Test-KriticalPax8Mcp
 
     .EXAMPLE
-        Test-KritPax8Mcp -Quiet
+        Test-KriticalPax8Mcp -Quiet
         Returns the result object without writing to host.
 
     .NOTES
@@ -33,7 +33,7 @@ function Test-KritPax8Mcp {
         [switch] $NoBanner
     )
     if (-not $NoBanner.IsPresent -and -not $Quiet.IsPresent) {
-        Write-KritPax8Banner -Title 'Pax8 MCP Health Probe' -Compact
+        Write-KriticalPax8Banner -Title 'Pax8 MCP Health Probe' -Compact
     }
     $results = [System.Collections.Generic.List[pscustomobject]]::new()
     $addGate = {
@@ -42,7 +42,7 @@ function Test-KritPax8Mcp {
     }
 
     # G1
-    $tokenPath = Get-KritPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName
+    $tokenPath = Get-KriticalPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName
     $secretsDirPath = Split-Path -Parent $tokenPath
     $g1 = Test-Path -LiteralPath $secretsDirPath
     & $addGate 'G1.SecretsFolder' $g1 $secretsDirPath
@@ -50,23 +50,23 @@ function Test-KritPax8Mcp {
     # G2
     $token = $null
     if ($g1) {
-        try { $token = Read-KritPax8Token -SecretsDir $SecretsDir -TokenFileName $TokenFileName } catch { }
+        try { $token = Read-KriticalPax8Token -SecretsDir $SecretsDir -TokenFileName $TokenFileName } catch { }
     }
     $g2Detail = if ($token) { "length=" + $token.Length } else { "length=0" }
     & $addGate 'G2.TokenSane' ([bool]$token) $g2Detail
 
     # G3
-    $disc = Test-KritPax8McpOAuthDiscovery
+    $disc = Test-KriticalPax8McpOAuthDiscovery
     & $addGate 'G3.OAuthDiscovery' $disc.Ok ("issuer=" + $disc.Issuer + " scopes=" + ($disc.Scopes -join ','))
 
     # G4 + G5 (only if token sane)
     if ($token) {
-        $init = Invoke-KritPax8McpInitialize -Token $token
+        $init = Invoke-KriticalPax8McpInitialize -Token $token
         $g4Detail = "server=" + $init.ServerName + " v" + $init.ServerVersion
         if ($init.Error) { $g4Detail += " err=" + $init.Error }
         & $addGate 'G4.McpInitialize' $init.Ok $g4Detail
         if ($init.Ok) {
-            $tl = Get-KritPax8McpToolList -Token $token
+            $tl = Get-KriticalPax8McpToolList -Token $token
             & $addGate 'G5.ToolsList' ($tl.Ok -and $tl.ToolCount -ge 1) ("toolCount=" + $tl.ToolCount + " sample=" + (($tl.Tools | Select-Object -First 5) -join ','))
         } else {
             & $addGate 'G5.ToolsList' $false 'skipped - initialize failed'
@@ -77,13 +77,13 @@ function Test-KritPax8Mcp {
     }
 
     # G6
-    $status = Get-KritPax8McpStatus -NoBanner
+    $status = Get-KriticalPax8McpStatus -NoBanner
     $wiredAgents = @($status.Agents | Where-Object HasPax8Entry)
     & $addGate 'G6.AnyAgentWired' ($wiredAgents.Count -gt 0) (($wiredAgents | Select-Object -ExpandProperty Agent) -join ',')
 
     # G7 - re-validate token via the same path the wired agents will use
     if ($token -and $wiredAgents.Count -gt 0) {
-        $init2 = Invoke-KritPax8McpInitialize -Token $token
+        $init2 = Invoke-KriticalPax8McpInitialize -Token $token
         & $addGate 'G7.WiredAgentTokenValid' $init2.Ok ("status=" + $init2.StatusCode)
     } else {
         & $addGate 'G7.WiredAgentTokenValid' $false 'skipped - no wired agent or no token'

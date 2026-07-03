@@ -1,4 +1,4 @@
-function Get-KritPax8TokenPath {
+function Get-KriticalPax8TokenPath {
     [CmdletBinding()]
     [OutputType([string])]
     param(
@@ -12,7 +12,7 @@ function Get-KritPax8TokenPath {
     Join-Path $SecretsDir $TokenFileName
 }
 
-function Read-KritPax8Token {
+function Read-KriticalPax8Token {
     <#
     .SYNOPSIS
         Reads the Pax8 MCP token from the Kritical secrets folder. NEVER echoes it.
@@ -24,7 +24,7 @@ function Read-KritPax8Token {
         [string] $TokenFileName,
         [switch] $AllowMissing
     )
-    $path = Get-KritPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName
+    $path = Get-KriticalPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName
     if (-not (Test-Path -LiteralPath $path)) {
         if ($AllowMissing) { return $null }
         throw "Pax8 MCP token file not found at $path. Mint one from app.pax8.com > Settings > Integrations > MCP server > Connect > Claude > Option 2 Pax8 Token (Legacy) and save to that exact path."
@@ -39,7 +39,7 @@ function Read-KritPax8Token {
     return $token
 }
 
-function Test-KritPax8TokenSane {
+function Test-KriticalPax8TokenSane {
     <#
     .SYNOPSIS
         Returns $true when the token looks like a valid Pax8 MCP token shape.

@@ -1,4 +1,4 @@
-function Install-KritPax8Mcp {
+function Install-KriticalPax8Mcp {
     <#
     .SYNOPSIS
         Installs the Pax8 hosted MCP server into one or more agents on this machine.
@@ -40,20 +40,20 @@ function Install-KritPax8Mcp {
         Skip the live mcp.pax8.com probe.
 
     .EXAMPLE
-        Install-KritPax8Mcp -Agent claude
+        Install-KriticalPax8Mcp -Agent claude
         Wires Claude Code only.
 
     .EXAMPLE
-        Install-KritPax8Mcp
+        Install-KriticalPax8Mcp
         Auto-detects and wires every installed agent.
 
     .EXAMPLE
-        Install-KritPax8Mcp -Agent claude,cursor -IncludeOAuthEntry:$false
+        Install-KriticalPax8Mcp -Agent claude,cursor -IncludeOAuthEntry:$false
         Wires Claude + Cursor with the token entry only (no OAuth secondary).
 
     .NOTES
         Author: Joshua Finley - Kritical Pty Ltd
-        See also: Get-KritPax8McpStatus, Test-KritPax8Mcp, Update-KritPax8McpToken, Remove-KritPax8Mcp
+        See also: Get-KriticalPax8McpStatus, Test-KriticalPax8Mcp, Update-KriticalPax8McpToken, Remove-KriticalPax8Mcp
     #>
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([pscustomobject])]
@@ -67,20 +67,20 @@ function Install-KritPax8Mcp {
         [switch]   $NoBanner
     )
 
-    if (-not $NoBanner.IsPresent) { Write-KritPax8Banner -Title 'Install Pax8 MCP' }
+    if (-not $NoBanner.IsPresent) { Write-KriticalPax8Banner -Title 'Install Pax8 MCP' }
 
     # Secrets preflight - fail fast BEFORE any agent config is touched
-    $preflight = Test-KritPax8Secrets -SecretsDir $SecretsDir -TokenFileName $TokenFileName -NoBanner
+    $preflight = Test-KriticalPax8Secrets -SecretsDir $SecretsDir -TokenFileName $TokenFileName -NoBanner
     if (-not $preflight.Ok) {
         Write-Host '--- Secrets preflight FAILED ---' -ForegroundColor Red
         $preflight.Checks | Where-Object { -not $_.Pass } | Format-Table -AutoSize | Out-String | Write-Host
         throw "Cannot install — secrets preflight failed ($($preflight.FailedCount) check(s)). No agent configs modified."
     }
 
-    $token = Read-KritPax8Token -SecretsDir $SecretsDir -TokenFileName $TokenFileName
+    $token = Read-KriticalPax8Token -SecretsDir $SecretsDir -TokenFileName $TokenFileName
     Write-Host ("Token loaded (length=" + $token.Length + " chars).") -ForegroundColor Green
 
-    $allTargets = Get-KritPax8AgentTargets
+    $allTargets = Get-KriticalPax8AgentTargets
     $selection = if ($Agent) {
         $allTargets | Where-Object { $_.Name -in $Agent }
     } else {
@@ -99,7 +99,7 @@ function Install-KritPax8Mcp {
     foreach ($t in $selection) {
         if ($PSCmdlet.ShouldProcess($t.Path, "Wire pax8 MCP")) {
             try {
-                $res = Install-KritPax8McpForAgent -AgentName $t.Name -Token $token -IncludeOAuthEntry:$IncludeOAuthEntry
+                $res = Install-KriticalPax8McpForAgent -AgentName $t.Name -Token $token -IncludeOAuthEntry:$IncludeOAuthEntry
                 $rows += [pscustomobject]@{
                     Agent     = $t.Name
                     Path      = $t.Path
@@ -125,9 +125,9 @@ function Install-KritPax8Mcp {
     if (-not $SkipProbe.IsPresent) {
         Write-Host ""
         Write-Host "Probing mcp.pax8.com with token..." -ForegroundColor DarkCyan
-        $init = Invoke-KritPax8McpInitialize -Token $token
+        $init = Invoke-KriticalPax8McpInitialize -Token $token
         if ($init.Ok) {
-            $tools = Get-KritPax8McpToolList -Token $token
+            $tools = Get-KriticalPax8McpToolList -Token $token
             Write-Host ("  Server: " + $init.ServerName + " v" + $init.ServerVersion + " | tools: " + $tools.ToolCount) -ForegroundColor Green
             $probe = [pscustomobject]@{
                 Ok=$true; Server=$init.ServerName; Version=$init.ServerVersion; ToolCount=$tools.ToolCount
@@ -143,12 +143,12 @@ function Install-KritPax8Mcp {
     Write-Host "1. Close every running instance of the wired agent(s) (Claude Code panel, Codex session, Cursor, VS Code etc.)"
     Write-Host "2. Re-open. MCP servers register at session start only."
     Write-Host "3. Pax8 tools (21+ as of 2026-06-24) surface in the new session."
-    Write-Host "4. Rotate token: replace the secrets file then re-run Install-KritPax8Mcp."
+    Write-Host "4. Rotate token: replace the secrets file then re-run Install-KriticalPax8Mcp."
 
     [pscustomobject]@{
         Agents          = $rows
         Probe           = $probe
-        TokenPath       = (Get-KritPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName)
+        TokenPath       = (Get-KriticalPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName)
         RestartRequired = $true
     }
 }

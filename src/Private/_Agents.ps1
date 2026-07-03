@@ -8,7 +8,7 @@
 #   - vscode-mcp (VS Code generic mcp.json: $env:APPDATA\Code\User\mcp.json — Insiders + stable)
 # Each writer is idempotent + backs up before edit.
 
-function Get-KritPax8AgentTargets {
+function Get-KriticalPax8AgentTargets {
     <#
     .SYNOPSIS
         Returns the canonical list of supported agent targets, with detected state per machine.
@@ -43,7 +43,7 @@ function Get-KritPax8AgentTargets {
 }
 
 # --- JSON writer (Claude Code, Cursor, Continue, vscode mcp.json) ---
-function Write-KritPax8JsonAgentConfig {
+function Write-KriticalPax8JsonAgentConfig {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)] [string] $Path,
@@ -122,7 +122,7 @@ print('OK keys=' + ','.join(sorted(mcp.keys())))
 }
 
 # --- TOML writer (Codex config.toml) ---
-function Write-KritPax8TomlAgentConfig {
+function Write-KriticalPax8TomlAgentConfig {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)] [string] $Path,
@@ -177,7 +177,7 @@ url = "$McpEndpoint"
 }
 
 # --- Per-agent dispatcher ---
-function Install-KritPax8McpForAgent {
+function Install-KriticalPax8McpForAgent {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)] [string] $AgentName,
@@ -186,13 +186,13 @@ function Install-KritPax8McpForAgent {
         [switch] $IncludeOAuthEntry,
         [switch] $RemoveOnly
     )
-    $targets = Get-KritPax8AgentTargets
+    $targets = Get-KriticalPax8AgentTargets
     $t = $targets | Where-Object Name -eq $AgentName | Select-Object -First 1
     if (-not $t) { throw "Unknown agent name: $AgentName. Valid: $($targets.Name -join ', ')" }
     if ($t.Format -eq 'json') {
-        Write-KritPax8JsonAgentConfig -Path $t.Path -Token $Token -McpEndpoint $McpEndpoint -IncludeOAuthEntry:$IncludeOAuthEntry -RemoveOnly:$RemoveOnly
+        Write-KriticalPax8JsonAgentConfig -Path $t.Path -Token $Token -McpEndpoint $McpEndpoint -IncludeOAuthEntry:$IncludeOAuthEntry -RemoveOnly:$RemoveOnly
     } elseif ($t.Format -eq 'toml') {
-        Write-KritPax8TomlAgentConfig -Path $t.Path -Token $Token -McpEndpoint $McpEndpoint -RemoveOnly:$RemoveOnly
+        Write-KriticalPax8TomlAgentConfig -Path $t.Path -Token $Token -McpEndpoint $McpEndpoint -RemoveOnly:$RemoveOnly
     } else {
         throw "Unsupported format $($t.Format) for agent $AgentName"
     }

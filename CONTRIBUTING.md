@@ -1,4 +1,4 @@
-# Contributing to Krit.Pax8Mcp
+# Contributing to Kritical.Pax8Mcp
 
 ```text
 ·· × × × ···  SirJ's Deaddrop  ··· × × × ···
@@ -15,7 +15,7 @@ This module is Kritical-authored and intended primarily for Kritical operators a
 
 ## Local development setup
 
-1. Clone the repo to `~/OneDrive - Kritical Pty Ltd/Github/Krit.Pax8Mcp/` (or anywhere on a Kritical operator OneDrive).
+1. Clone the repo to `~/OneDrive - Kritical Pty Ltd/Github/Kritical.Pax8Mcp/` (or anywhere on a Kritical operator OneDrive).
 2. PowerShell 7+ required for most paths (PowerShell 5.1 works for everything except a few `??` operator sites).
 3. Pester 5.5+ required for tests.
 
@@ -43,15 +43,15 @@ Install-Module Pester -MinimumVersion 5.5.0 -Force -SkipPublisherCheck -Scope Cu
 - Comment-based help on every public function — `.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER` per parameter, `.EXAMPLE`, `.NOTES` (with `Author: Joshua Finley - Kritical Pty Ltd`).
 - Private helpers go in `src/Private/` and are dot-sourced by the root module.
 - Public functions go in `src/Public/` and are listed verbatim in `FunctionsToExport` of the `.psd1`.
-- Brand: every operator-facing path calls `Write-KritPax8Banner` (full) or `-Compact` at start. No AI-agent banners ever.
+- Brand: every operator-facing path calls `Write-KriticalPax8Banner` (full) or `-Compact` at start. No AI-agent banners ever.
 - No abbreviations of `Kritical™` to `Kritical` in customer-facing strings.
 
 ---
 
 ## Adding a new agent target
 
-1. Add a row to `Get-KritPax8AgentTargets` in `src/Private/_Agents.ps1` with Name / Format / Path / InstallHint.
-2. If a new format (not JSON or TOML), add a `Write-KritPax8XxxAgentConfig` private writer in `_Agents.ps1` and wire it into `Install-KritPax8McpForAgent`.
+1. Add a row to `Get-KriticalPax8AgentTargets` in `src/Private/_Agents.ps1` with Name / Format / Path / InstallHint.
+2. If a new format (not JSON or TOML), add a `Write-KriticalPax8XxxAgentConfig` private writer in `_Agents.ps1` and wire it into `Install-KriticalPax8McpForAgent`.
 3. Add unit tests in `tests/Unit/Agents.Tests.ps1` covering: fresh-write, idempotent re-write, preserves siblings, `-RemoveOnly`.
 4. Update README's "Supported agents" table.
 
@@ -60,7 +60,7 @@ Install-Module Pester -MinimumVersion 5.5.0 -Force -SkipPublisherCheck -Scope Cu
 ## Running tests
 
 ```powershell
-cd "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Krit.Pax8Mcp"
+cd "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp"
 .\tests\Invoke-AllTests.ps1            # full unit + live e2e
 .\tests\Invoke-AllTests.ps1 -SkipE2E   # CI / offline
 ```
@@ -77,7 +77,7 @@ Semantic versioning per the manifest.
 - MINOR (`1.x.0`): new agent target, new optional parameter, additive change.
 - MAJOR (`x.0.0`): rename or remove an exported function, change a parameter contract.
 
-Bump the version in `src/Krit.Pax8Mcp.psd1` and add a `ReleaseNotes` entry in `PSData.ReleaseNotes` in the same commit.
+Bump the version in `src/Kritical.Pax8Mcp.psd1` and add a `ReleaseNotes` entry in `PSData.ReleaseNotes` in the same commit.
 
 ---
 

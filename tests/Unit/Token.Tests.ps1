@@ -2,24 +2,24 @@
 # Author: Joshua Finley - Kritical Pty Ltd
 
 BeforeAll {
-    $modPath = Join-Path $PSScriptRoot '..\..\src\Krit.Pax8Mcp.psd1'
+    $modPath = Join-Path $PSScriptRoot '..\..\src\Kritical.Pax8Mcp.psd1'
     Import-Module $modPath -Force
 
     $script:TempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("krit-pax8-test-" + [guid]::NewGuid())
     New-Item -ItemType Directory -Path $script:TempDir | Out-Null
 
     # Token primitives are internal; access via module scope
-    $mod = Get-Module Krit.Pax8Mcp
-    $script:GetPath  = { param($d,$f) & $mod { param($a,$b) Get-KritPax8TokenPath -SecretsDir $a -TokenFileName $b } $d $f }
-    $script:ReadTok  = { param($d,$f,$am) & $mod { param($a,$b,$am) Read-KritPax8Token -SecretsDir $a -TokenFileName $b -AllowMissing:$am } $d $f $am }
-    $script:Sane     = { param($t) & $mod { param($x) Test-KritPax8TokenSane -Token $x } $t }
+    $mod = Get-Module Kritical.Pax8Mcp
+    $script:GetPath  = { param($d,$f) & $mod { param($a,$b) Get-KriticalPax8TokenPath -SecretsDir $a -TokenFileName $b } $d $f }
+    $script:ReadTok  = { param($d,$f,$am) & $mod { param($a,$b,$am) Read-KriticalPax8Token -SecretsDir $a -TokenFileName $b -AllowMissing:$am } $d $f $am }
+    $script:Sane     = { param($t) & $mod { param($x) Test-KriticalPax8TokenSane -Token $x } $t }
 }
 
 AfterAll {
     Remove-Item -LiteralPath $script:TempDir -Recurse -Force -ErrorAction SilentlyContinue
 }
 
-Describe 'Get-KritPax8TokenPath' {
+Describe 'Get-KriticalPax8TokenPath' {
     It 'joins SecretsDir + TokenFileName' {
         $p = & $script:GetPath 'C:\sec' 'foo.txt'
         $p | Should -Be 'C:\sec\foo.txt'
@@ -31,7 +31,7 @@ Describe 'Get-KritPax8TokenPath' {
     }
 }
 
-Describe 'Read-KritPax8Token' {
+Describe 'Read-KriticalPax8Token' {
     It 'throws when file missing and -AllowMissing not set' {
         { & $script:ReadTok $script:TempDir 'absent.txt' $false } | Should -Throw -ExpectedMessage '*not found*'
     }
@@ -61,7 +61,7 @@ Describe 'Read-KritPax8Token' {
     }
 }
 
-Describe 'Test-KritPax8TokenSane' {
+Describe 'Test-KriticalPax8TokenSane' {
     It 'rejects null + empty + whitespace' {
         & $script:Sane $null    | Should -BeFalse
         & $script:Sane ''       | Should -BeFalse

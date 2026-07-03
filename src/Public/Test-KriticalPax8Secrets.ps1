@@ -1,4 +1,4 @@
-function Test-KritPax8Secrets {
+function Test-KriticalPax8Secrets {
     <#
     .SYNOPSIS
         Preflight gate — verifies Kritical secrets folder + token file are in place
@@ -7,7 +7,7 @@ function Test-KritPax8Secrets {
     .DESCRIPTION
         Read-only. Returns a structured result with `Ok` + per-check details.
         Throws by default when -Strict and any check fails (so callers can use it
-        as a guard: `Test-KritPax8Secrets -Strict | Out-Null` before mutation).
+        as a guard: `Test-KriticalPax8Secrets -Strict | Out-Null` before mutation).
 
         Checks performed:
             S1 OneDrive Kritical folder present
@@ -18,8 +18,8 @@ function Test-KritPax8Secrets {
                to operate when secrets ended up inside a tracked folder)
 
     .EXAMPLE
-        Test-KritPax8Secrets -Strict   # throws on any failure
-        Test-KritPax8Secrets           # returns object, host-friendly summary
+        Test-KriticalPax8Secrets -Strict   # throws on any failure
+        Test-KriticalPax8Secrets           # returns object, host-friendly summary
 
     .NOTES
         Author: Joshua Finley - Kritical Pty Ltd
@@ -33,7 +33,7 @@ function Test-KritPax8Secrets {
         [switch] $NoBanner
     )
 
-    if (-not $NoBanner.IsPresent) { Write-KritPax8Banner -Title 'Secrets Preflight' -Compact }
+    if (-not $NoBanner.IsPresent) { Write-KriticalPax8Banner -Title 'Secrets Preflight' -Compact }
 
     $secretsDirPath = if ($SecretsDir) { $SecretsDir } else { Join-Path $env:USERPROFILE 'OneDrive - Kritical Pty Ltd\Github-SecretsOutsideOfGitRepos' }
     $oneDriveRoot   = Join-Path $env:USERPROFILE 'OneDrive - Kritical Pty Ltd'

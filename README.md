@@ -1,4 +1,4 @@
-# Krit.Pax8Mcp — Kritical Pax8 MCP Toolkit
+# Kritical.Pax8Mcp — Kritical Pax8 MCP Toolkit
 
 ```text
 ·· × × × ···  SirJ's Deaddrop  ··· × × × ···
@@ -63,8 +63,8 @@ Both Pax8 MCP auth paths are supported and can coexist:
 
 - **Multi-machine**: every Kritical operator can install in one command and get an identical wiring.
 - **Multi-agent**: a single source of truth across Claude / Codex / Cursor / Continue / VS Code rather than six bespoke setup guides.
-- **Idempotent**: re-running `Install-KritPax8Mcp` is always safe; backs up each agent config before edits.
-- **Auditable**: `Test-KritPax8Mcp` runs 7 gates and exits 0/1, ready to wire into a supervisor health pass.
+- **Idempotent**: re-running `Install-KriticalPax8Mcp` is always safe; backs up each agent config before edits.
+- **Auditable**: `Test-KriticalPax8Mcp` runs 7 gates and exits 0/1, ready to wire into a supervisor health pass.
 - **Brand-locked**: every operator-facing output starts with the canonical Kritical banner (`SirJ's Deaddrop` / `A Seriously Kritical™ Production`).
 
 ---
@@ -74,36 +74,36 @@ Both Pax8 MCP auth paths are supported and can coexist:
 ### Option A — Local development install
 
 ```powershell
-$src = "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Krit.Pax8Mcp\src"
-Import-Module "$src\Krit.Pax8Mcp.psd1" -Force
+$src = "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp\src"
+Import-Module "$src\Kritical.Pax8Mcp.psd1" -Force
 ```
 
 ### Option B — GitHub release (private repo today)
 
 ```powershell
 # 1. Download the bundle
-$zip = Join-Path $env:TEMP 'Krit.Pax8Mcp-1.0.0.zip'
-gh release download v1.0.0 -R Sir-J-AU/Krit.Pax8Mcp -p '*.zip' -D $env:TEMP --clobber
+$zip = Join-Path $env:TEMP 'Kritical.Pax8Mcp-1.0.0.zip'
+gh release download v1.0.0 -R Sir-J-AU/Kritical.Pax8Mcp -p '*.zip' -D $env:TEMP --clobber
 
 # 2. Resolve the correct PSModulePath entry (handles OneDrive-mapped Documents)
 $psMod = ($env:PSModulePath -split ';' |
           Where-Object { $_ -match 'Documents\\PowerShell\\Modules$' } |
           Select-Object -First 1)
-$instDir = Join-Path $psMod 'Krit.Pax8Mcp\1.0.0'
+$instDir = Join-Path $psMod 'Kritical.Pax8Mcp\1.0.0'
 
 # 3. Install + import + verify
 if (Test-Path -LiteralPath $instDir) { Remove-Item -LiteralPath (Split-Path $instDir -Parent) -Recurse -Force }
 Expand-Archive -LiteralPath $zip -DestinationPath $instDir -Force
-Import-Module Krit.Pax8Mcp -Force
-Test-KritPax8Secrets   # preflight — refuses if secrets folder isn't ready
-Test-KritPax8Mcp       # 7-gate health probe
+Import-Module Kritical.Pax8Mcp -Force
+Test-KriticalPax8Secrets   # preflight — refuses if secrets folder isn't ready
+Test-KriticalPax8Mcp       # 7-gate health probe
 ```
 
 ### Option C — PSGallery (once published)
 
 ```powershell
-Install-Module Krit.Pax8Mcp -Scope CurrentUser
-Import-Module  Krit.Pax8Mcp -Force
+Install-Module Kritical.Pax8Mcp -Scope CurrentUser
+Import-Module  Kritical.Pax8Mcp -Force
 ```
 
 ---
@@ -116,54 +116,54 @@ Import-Module  Krit.Pax8Mcp -Force
 Test-Path "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github-SecretsOutsideOfGitRepos\pax8-mcpServer-auth.txt"
 
 # 2. Install across every detected agent.
-Install-KritPax8Mcp
+Install-KriticalPax8Mcp
 
 # 3. Health probe — should return Ok=$true.
-Test-KritPax8Mcp
+Test-KriticalPax8Mcp
 
 # 4. Restart your agents (close Claude Code panel + re-open; same for Codex / Cursor / etc.).
 
 # 5. Status report at any time.
-Get-KritPax8McpStatus | Format-Table
+Get-KriticalPax8McpStatus | Format-Table
 ```
 
 ---
 
 ## Public functions — what, why, how
 
-### `Install-KritPax8Mcp`
+### `Install-KriticalPax8Mcp`
 
 Idempotent installer. Reads the token, backs up each target agent config, writes the `pax8` + (optionally) `pax8-oauth` entries, probes the live MCP, reports.
 
 ```powershell
 # Auto-detect and install everywhere
-Install-KritPax8Mcp
+Install-KriticalPax8Mcp
 
 # One agent only
-Install-KritPax8Mcp -Agent claude
+Install-KriticalPax8Mcp -Agent claude
 
 # Token-only entry (no OAuth secondary)
-Install-KritPax8Mcp -Agent claude -IncludeOAuthEntry:$false
+Install-KriticalPax8Mcp -Agent claude -IncludeOAuthEntry:$false
 
 # Force-write even when the host isn't installed yet (creates parent dirs)
-Install-KritPax8Mcp -Agent cursor -Force
+Install-KriticalPax8Mcp -Agent cursor -Force
 ```
 
-### `Get-KritPax8McpStatus`
+### `Get-KriticalPax8McpStatus`
 
 Read-only inventory across every supported agent on this machine.
 
 ```powershell
-Get-KritPax8McpStatus | Format-Table
+Get-KriticalPax8McpStatus | Format-Table
 # Shows per-agent: HostInstalled / ConfigExists / HasPax8Entry / HasOAuthEntry / HasTokenHeader
 ```
 
-### `Test-KritPax8Mcp`
+### `Test-KriticalPax8Mcp`
 
 Comprehensive 7-gate health probe. Exits 0 when healthy.
 
 ```powershell
-Test-KritPax8Mcp
+Test-KriticalPax8Mcp
 # G1 SecretsFolder
 # G2 TokenSane
 # G3 OAuthDiscovery (RFC 8414 metadata at mcp.pax8.com)
@@ -173,31 +173,31 @@ Test-KritPax8Mcp
 # G7 WiredAgentTokenValid
 ```
 
-### `Update-KritPax8McpToken`
+### `Update-KriticalPax8McpToken`
 
 Rotate the Pax8 MCP token. Prompts for the new value via `Read-Host -AsSecureString` (never echoed), backs up the old token file, writes the new one to the secrets folder, re-wires every currently-wired agent, re-probes.
 
 ```powershell
-Update-KritPax8McpToken
+Update-KriticalPax8McpToken
 
 # Non-interactive (e.g. supervisor / Hermes / CI)
-Update-KritPax8McpToken -NewToken (Get-Content C:\drop\new-token.txt -Raw)
+Update-KriticalPax8McpToken -NewToken (Get-Content C:\drop\new-token.txt -Raw)
 ```
 
-### `Remove-KritPax8Mcp`
+### `Remove-KriticalPax8Mcp`
 
 Idempotent removal. Backs up each agent config, strips `pax8` + `pax8-oauth` entries, leaves all other MCP servers (`falcon-mcp` etc.) untouched. Token file in the secrets folder is preserved unless `-RemoveToken` is passed.
 
 ```powershell
-Remove-KritPax8Mcp -Agent claude
-Remove-KritPax8Mcp -RemoveToken   # full uninstall + move token aside
+Remove-KriticalPax8Mcp -Agent claude
+Remove-KriticalPax8Mcp -RemoveToken   # full uninstall + move token aside
 ```
 
 ### Banner helpers
 
 ```powershell
-Write-KritPax8Banner -Title 'Health Probe'            # interactive, brand colours
-Get-KritPax8Banner -Title 'Health Probe' -Compact     # one-liner string for embedding
+Write-KriticalPax8Banner -Title 'Health Probe'            # interactive, brand colours
+Get-KriticalPax8Banner -Title 'Health Probe' -Compact     # one-liner string for embedding
 ```
 
 ---
@@ -240,9 +240,9 @@ url = "https://mcp.pax8.com/v1/mcp"
 
 1. **Token only ever lives at**: `Github-SecretsOutsideOfGitRepos\pax8-mcpServer-auth.txt` on the Kritical operator OneDrive.
 2. **Token never lives in this repo**. Every config edit reads at runtime from that path.
-3. **Never echoed**. `Read-KritPax8Token` returns the token only; no logging of the value.
+3. **Never echoed**. `Read-KriticalPax8Token` returns the token only; no logging of the value.
 4. **Backups stay out of git**: `.bak.krit-pax8mcp.<utc>` is auto-ignored by the parent toolkit `.gitignore`.
-5. **Rotation**: re-mint at `app.pax8.com`, replace the file, run `Update-KritPax8McpToken`. Old token file is auto-backed up with `.bak.<utc>` suffix.
+5. **Rotation**: re-mint at `app.pax8.com`, replace the file, run `Update-KriticalPax8McpToken`. Old token file is auto-backed up with `.bak.<utc>` suffix.
 
 ---
 
@@ -251,7 +251,7 @@ url = "https://mcp.pax8.com/v1/mcp"
 ### Unit
 
 ```powershell
-cd "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Krit.Pax8Mcp"
+cd "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp"
 .\tests\Invoke-AllTests.ps1 -SkipE2E
 ```
 
@@ -274,7 +274,7 @@ Covers:
 - OAuth discovery endpoint returns valid metadata.
 - `initialize` handshake with token returns `pax8-mcp-server` identity.
 - `tools/list` returns ≥1 tool (currently 21).
-- Full `Test-KritPax8Mcp` gate set passes.
+- Full `Test-KriticalPax8Mcp` gate set passes.
 
 ---
 
@@ -282,9 +282,9 @@ Covers:
 
 See [docs/PUBLISHING.md](docs/PUBLISHING.md). High level:
 
-1. Bump `ModuleVersion` in `src/Krit.Pax8Mcp.psd1`.
+1. Bump `ModuleVersion` in `src/Kritical.Pax8Mcp.psd1`.
 2. Run the full test suite green: `.\tests\Invoke-AllTests.ps1`.
-3. `Test-ModuleManifest src\Krit.Pax8Mcp.psd1`.
+3. `Test-ModuleManifest src\Kritical.Pax8Mcp.psd1`.
 4. `Publish-Module -Path src -NuGetApiKey <psgallery-key>`.
 
 ---
@@ -292,7 +292,7 @@ See [docs/PUBLISHING.md](docs/PUBLISHING.md). High level:
 ## Files
 
 ```text
-Krit.Pax8Mcp/
+Kritical.Pax8Mcp/
 ├── README.md                                    ← this file
 ├── LICENSE
 ├── CONTRIBUTING.md
@@ -301,8 +301,8 @@ Krit.Pax8Mcp/
 │   ├── USAGE.md
 │   └── ARCHITECTURE.md
 ├── src/
-│   ├── Krit.Pax8Mcp.psd1                        ← module manifest (Author = Joshua Finley)
-│   ├── Krit.Pax8Mcp.psm1                        ← root module
+│   ├── Kritical.Pax8Mcp.psd1                        ← module manifest (Author = Joshua Finley)
+│   ├── Kritical.Pax8Mcp.psm1                        ← root module
 │   ├── Assets/
 │   │   └── kritical-logo.txt                    ← canonical banner (verbatim)
 │   ├── Private/
@@ -311,11 +311,11 @@ Krit.Pax8Mcp/
 │   │   ├── _McpProbe.ps1
 │   │   └── _Agents.ps1
 │   └── Public/
-│       ├── Install-KritPax8Mcp.ps1
-│       ├── Get-KritPax8McpStatus.ps1
-│       ├── Test-KritPax8Mcp.ps1
-│       ├── Update-KritPax8McpToken.ps1
-│       └── Remove-KritPax8Mcp.ps1
+│       ├── Install-KriticalPax8Mcp.ps1
+│       ├── Get-KriticalPax8McpStatus.ps1
+│       ├── Test-KriticalPax8Mcp.ps1
+│       ├── Update-KriticalPax8McpToken.ps1
+│       └── Remove-KriticalPax8Mcp.ps1
 └── tests/
     ├── Invoke-AllTests.ps1
     ├── Unit/

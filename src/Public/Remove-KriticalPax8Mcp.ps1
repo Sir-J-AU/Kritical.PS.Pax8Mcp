@@ -1,4 +1,4 @@
-function Remove-KritPax8Mcp {
+function Remove-KriticalPax8Mcp {
     <#
     .SYNOPSIS
         Removes the Pax8 MCP wiring from one or more agents on this machine.
@@ -9,15 +9,15 @@ function Remove-KritPax8Mcp {
         MCP entries (falcon-mcp, etc.) untouched.
 
     .EXAMPLE
-        Remove-KritPax8Mcp -Agent claude
+        Remove-KriticalPax8Mcp -Agent claude
         Removes pax8 + pax8-oauth entries from Claude Code only.
 
     .EXAMPLE
-        Remove-KritPax8Mcp
+        Remove-KriticalPax8Mcp
         Removes from every currently-wired agent.
 
     .EXAMPLE
-        Remove-KritPax8Mcp -RemoveToken
+        Remove-KriticalPax8Mcp -RemoveToken
         Also moves the token file aside (kept as .bak.<utc>) so a fresh mint is required.
 
     .NOTES
@@ -32,14 +32,14 @@ function Remove-KritPax8Mcp {
         [string]   $TokenFileName,
         [switch]   $NoBanner
     )
-    if (-not $NoBanner.IsPresent) { Write-KritPax8Banner -Title 'Remove Pax8 MCP' }
+    if (-not $NoBanner.IsPresent) { Write-KriticalPax8Banner -Title 'Remove Pax8 MCP' }
 
-    $allTargets = Get-KritPax8AgentTargets
+    $allTargets = Get-KriticalPax8AgentTargets
     $selection = if ($Agent) {
         $allTargets | Where-Object Name -in $Agent
     } else {
         # only remove from agents that have the entry — minimize churn
-        $status = Get-KritPax8McpStatus -NoBanner
+        $status = Get-KriticalPax8McpStatus -NoBanner
         $wired = $status.Agents | Where-Object HasPax8Entry | Select-Object -ExpandProperty Agent
         $allTargets | Where-Object Name -in $wired
     }
@@ -50,14 +50,14 @@ function Remove-KritPax8Mcp {
     }
 
     $tokenForRewriting = $null
-    try { $tokenForRewriting = Read-KritPax8Token -SecretsDir $SecretsDir -TokenFileName $TokenFileName -AllowMissing } catch { }
+    try { $tokenForRewriting = Read-KriticalPax8Token -SecretsDir $SecretsDir -TokenFileName $TokenFileName -AllowMissing } catch { }
     if (-not $tokenForRewriting) { $tokenForRewriting = 'TOKEN-NOT-AVAILABLE' }
 
     $rows = @()
     foreach ($t in $selection) {
         if ($PSCmdlet.ShouldProcess($t.Path, "Remove pax8 + pax8-oauth entries")) {
             try {
-                $res = Install-KritPax8McpForAgent -AgentName $t.Name -Token $tokenForRewriting -RemoveOnly
+                $res = Install-KriticalPax8McpForAgent -AgentName $t.Name -Token $tokenForRewriting -RemoveOnly
                 $rows += [pscustomobject]@{ Agent=$t.Name; Path=$t.Path; Ok=$true; Backup=$res.Backup }
                 Write-Host ("  [OK] removed from " + $t.Name) -ForegroundColor Green
             } catch {
@@ -69,7 +69,7 @@ function Remove-KritPax8Mcp {
 
     $tokenRemoved = $false
     if ($RemoveToken.IsPresent) {
-        $tokenPath = Get-KritPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName
+        $tokenPath = Get-KriticalPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName
         if (Test-Path -LiteralPath $tokenPath) {
             $utc = (Get-Date).ToUniversalTime().ToString('yyyyMMdd-HHmmssZ')
             $bak = "$tokenPath.bak.removed.$utc"

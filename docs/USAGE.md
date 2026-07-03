@@ -1,4 +1,4 @@
-# Krit.Pax8Mcp — Detailed Usage Guide
+# Kritical.Pax8Mcp — Detailed Usage Guide
 
 ```text
 ·· × × × ···  SirJ's Deaddrop  ··· × × × ···
@@ -79,23 +79,23 @@ If the token file isn't present, mint one:
 
 ```powershell
 # Step 1: load the module
-$root = "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Krit.Pax8Mcp"
-Import-Module "$root\src\Krit.Pax8Mcp.psd1" -Force
+$root = "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp"
+Import-Module "$root\src\Kritical.Pax8Mcp.psd1" -Force
 
 # Step 2: confirm token is in place
 Test-Path "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github-SecretsOutsideOfGitRepos\pax8-mcpServer-auth.txt"
 # True
 
 # Step 3: install across every detected agent
-Install-KritPax8Mcp
+Install-KriticalPax8Mcp
 # Banner + per-agent status + live probe (server pax8-mcp-server v1.0.0, 21 tools)
 
 # Step 4: verify
-Test-KritPax8Mcp
+Test-KriticalPax8Mcp
 # 7 gates -> ALL PASS
 
 # Step 5: status report
-Get-KritPax8McpStatus | Select-Object -ExpandProperty Agents | Format-Table
+Get-KriticalPax8McpStatus | Select-Object -ExpandProperty Agents | Format-Table
 
 # Step 6: restart Claude Code (close + re-open)
 # 21 pax8-* tools now surface in the new session.
@@ -105,7 +105,7 @@ Get-KritPax8McpStatus | Select-Object -ExpandProperty Agents | Format-Table
 
 ## Function-by-function reference
 
-### `Install-KritPax8Mcp`
+### `Install-KriticalPax8Mcp`
 
 | Parameter | Type | Purpose |
 |---|---|---|
@@ -121,20 +121,20 @@ Get-KritPax8McpStatus | Select-Object -ExpandProperty Agents | Format-Table
 
 **Output**: PSCustomObject with `Agents[]` (per-target rows), `Probe`, `TokenPath`, `RestartRequired=$true`.
 
-### `Get-KritPax8McpStatus`
+### `Get-KriticalPax8McpStatus`
 
 Read-only. Reports per-agent: `HostInstalled` / `ConfigExists` / `HasPax8Entry` / `HasOAuthEntry` / `HasTokenHeader`. Also reports `TokenPath` + `TokenPresent` at the top level.
 
-### `Test-KritPax8Mcp`
+### `Test-KriticalPax8Mcp`
 
 Runs 7 gates and returns `{ Gates[], Passed, Failed, Total, Ok }`. Use `-Quiet` to suppress host output (returns object only). Wire into a supervisor health pass via:
 
 ```powershell
-$r = Test-KritPax8Mcp -Quiet
+$r = Test-KriticalPax8Mcp -Quiet
 if (-not $r.Ok) { throw "Pax8 MCP unhealthy — $($r.Failed) of $($r.Total) gates failed" }
 ```
 
-### `Update-KritPax8McpToken`
+### `Update-KriticalPax8McpToken`
 
 Interactive rotate: prompts for the new token via `Read-Host -AsSecureString` (no echo, no clipboard exposure), backs up the old token to `<token-file>.bak.<utc>`, writes the new one, re-wires every currently-wired agent, re-probes.
 
@@ -142,14 +142,14 @@ Non-interactive rotate (for supervisor / Hermes):
 
 ```powershell
 $newTok = Get-Content C:\drop\fresh-pax8.txt -Raw
-Update-KritPax8McpToken -NewToken $newTok
+Update-KriticalPax8McpToken -NewToken $newTok
 ```
 
-### `Remove-KritPax8Mcp`
+### `Remove-KriticalPax8Mcp`
 
 Inverse of Install. Strips `pax8` + `pax8-oauth` entries from the targeted agent(s). Leaves all other MCP servers (e.g. `falcon-mcp`) untouched. Token file stays unless `-RemoveToken` is passed.
 
-### `Write-KritPax8Banner` / `Get-KritPax8Banner`
+### `Write-KriticalPax8Banner` / `Get-KriticalPax8Banner`
 
 Brand-banner helpers. Use anywhere a script needs the canonical Kritical banner.
 
@@ -160,9 +160,9 @@ Brand-banner helpers. Use anywhere a script needs the canonical Kritical banner.
 ### Proof 1 — OAuth metadata reachable
 
 ```powershell
-Import-Module "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Krit.Pax8Mcp\src\Krit.Pax8Mcp.psd1" -Force
-$mod = Get-Module Krit.Pax8Mcp
-& $mod { Test-KritPax8McpOAuthDiscovery } | Format-List
+Import-Module "$env:USERPROFILE\OneDrive - Kritical Pty Ltd\Github\Kritical.Pax8Mcp\src\Kritical.Pax8Mcp.psd1" -Force
+$mod = Get-Module Kritical.Pax8Mcp
+& $mod { Test-KriticalPax8McpOAuthDiscovery } | Format-List
 # Issuer                : https://mcp.pax8.com/v1
 # AuthorizeEndpoint     : https://mcp.pax8.com/v1/authorize
 # TokenEndpoint         : https://mcp.pax8.com/v1/token
@@ -173,8 +173,8 @@ $mod = Get-Module Krit.Pax8Mcp
 ### Proof 2 — Token works against the live MCP
 
 ```powershell
-$token = & $mod { Read-KritPax8Token }
-& $mod { param($t) Invoke-KritPax8McpInitialize -Token $t } $token | Format-List
+$token = & $mod { Read-KriticalPax8Token }
+& $mod { param($t) Invoke-KriticalPax8McpInitialize -Token $t } $token | Format-List
 # Ok            : True
 # StatusCode    : 200
 # ServerName    : pax8-mcp-server
@@ -184,7 +184,7 @@ $token = & $mod { Read-KritPax8Token }
 ### Proof 3 — 21 tools surfacing
 
 ```powershell
-$tools = & $mod { param($t) Get-KritPax8McpToolList -Token $t } $token
+$tools = & $mod { param($t) Get-KriticalPax8McpToolList -Token $t } $token
 $tools.ToolCount     # 21
 $tools.Tools | Select-Object -First 5
 # get-pax8-help-documents
@@ -197,7 +197,7 @@ $tools.Tools | Select-Object -First 5
 ### Proof 4 — Every gate green
 
 ```powershell
-Test-KritPax8Mcp
+Test-KriticalPax8Mcp
 # G1 SecretsFolder           True
 # G2 TokenSane               True   (length=36)
 # G3 OAuthDiscovery          True   (issuer=https://mcp.pax8.com/v1 ...)
@@ -229,10 +229,10 @@ Test-KritPax8Mcp
 | Symptom | Cause | Fix |
 |---|---|---|
 | `Pax8 MCP token file not found` | First-time setup, token never minted | Browser to `app.pax8.com` → Settings → Integrations → MCP server → Connect → Claude → Option 2 → save to canonical secrets path |
-| `HTTP 401` from initialize | Token rotated / revoked on Pax8 side | `Update-KritPax8McpToken` to mint + re-wire |
+| `HTTP 401` from initialize | Token rotated / revoked on Pax8 side | `Update-KriticalPax8McpToken` to mint + re-wire |
 | `HTTP 401` with `WWW-Authenticate: Bearer` but no `Missing x-pax8-mcp-token header` body | OAuth path being used without DCR completion | Restart Claude Code → browser MFA on first call → tokens cache |
 | `Python 3 required to edit JSON agent configs` | Python missing or only Microsoft Store shim found | Install Python 3.11+ from python.org. Or `winget install Python.Python.3.13` |
-| `Cannot index into a null array` from PowerShell | Trying to ConvertFrom-Json on `~/.claude.json` with case-colliding project keys | This module avoids that via Python-shim writer. If you hit this in a custom script, switch to `ConvertFrom-Json -AsHashtable` or use this module's `Write-KritPax8JsonAgentConfig`. |
+| `Cannot index into a null array` from PowerShell | Trying to ConvertFrom-Json on `~/.claude.json` with case-colliding project keys | This module avoids that via Python-shim writer. If you hit this in a custom script, switch to `ConvertFrom-Json -AsHashtable` or use this module's `Write-KriticalPax8JsonAgentConfig`. |
 | Tools don't surface after install | Agent wasn't restarted | Close + re-open. MCP servers load at session start only. |
 | `pax8-oauth` triggers browser every time | OAuth tokens not persisting | Check the agent's MCP token cache (Claude: `~/.claude/mcp-needs-auth-cache.json`). For Claude Code, deleting the stale row + retry usually fixes. |
 
@@ -289,8 +289,8 @@ Exact paths + entry shapes per supported agent.
 ## Security model
 
 1. **Token lives only in the Kritical secrets folder.** Never in this repo. Never in Claude/Codex/Cursor config except as a runtime-resolved value at install time.
-2. **Token rotation** is one command (`Update-KritPax8McpToken`). Old token file is auto-backed up; replace the live file in the secrets folder and re-run.
-3. **No echoing**. `Read-Host -AsSecureString` for interactive entry. `Read-KritPax8Token` returns the value to the caller only — never logs / writes it.
+2. **Token rotation** is one command (`Update-KriticalPax8McpToken`). Old token file is auto-backed up; replace the live file in the secrets folder and re-run.
+3. **No echoing**. `Read-Host -AsSecureString` for interactive entry. `Read-KriticalPax8Token` returns the value to the caller only — never logs / writes it.
 4. **Backups stay out of git** via `*.bak.*` patterns in the parent repo `.gitignore`.
 5. **No third-party data plane**. All MCP traffic goes directly from your agent to `mcp.pax8.com` over TLS. This module doesn't proxy or log.
 6. **AppLocker / device policy**: this module ships PowerShell only. No signed binaries. If your tenant blocks unsigned scripts, sign the `.psm1` per Kritical's code-signing policy before deploying.

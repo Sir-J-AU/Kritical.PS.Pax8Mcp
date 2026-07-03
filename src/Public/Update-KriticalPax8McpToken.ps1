@@ -1,4 +1,4 @@
-function Update-KritPax8McpToken {
+function Update-KriticalPax8McpToken {
     <#
     .SYNOPSIS
         Rotate the Pax8 MCP token: prompt for the new value (SecureString, no echo),
@@ -13,11 +13,11 @@ function Update-KritPax8McpToken {
         host buffer / transcript / clipboard echo.
 
     .EXAMPLE
-        Update-KritPax8McpToken
+        Update-KriticalPax8McpToken
         Prompts; rotates; re-wires every detected agent.
 
     .EXAMPLE
-        Update-KritPax8McpToken -NewToken (Get-Content C:\drop\new-token.txt -Raw)
+        Update-KriticalPax8McpToken -NewToken (Get-Content C:\drop\new-token.txt -Raw)
         Non-interactive rotation (CI / Hermes / supervisor).
 
     .NOTES
@@ -33,9 +33,9 @@ function Update-KritPax8McpToken {
         [switch] $NoBanner,
         [switch] $SkipReinstall
     )
-    if (-not $NoBanner.IsPresent) { Write-KritPax8Banner -Title 'Rotate Pax8 MCP Token' }
+    if (-not $NoBanner.IsPresent) { Write-KriticalPax8Banner -Title 'Rotate Pax8 MCP Token' }
 
-    $tokenPath = Get-KritPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName
+    $tokenPath = Get-KriticalPax8TokenPath -SecretsDir $SecretsDir -TokenFileName $TokenFileName
 
     if (-not $NewToken) {
         Write-Host ''
@@ -51,7 +51,7 @@ function Update-KritPax8McpToken {
     }
     $NewToken = $NewToken.Trim()
     if ([string]::IsNullOrWhiteSpace($NewToken)) { throw 'No token entered.' }
-    if (-not (Test-KritPax8TokenSane -Token $NewToken)) {
+    if (-not (Test-KriticalPax8TokenSane -Token $NewToken)) {
         throw ("New token rejected — failed sanity check (length=$($NewToken.Length), whitespace=" + ($NewToken -match '\s') + ").")
     }
 
@@ -72,13 +72,13 @@ function Update-KritPax8McpToken {
     $installResult = $null
     if (-not $SkipReinstall.IsPresent) {
         Write-Host 'Re-wiring agents with new token...' -ForegroundColor DarkCyan
-        $installResult = Install-KritPax8Mcp -Agent $Agent -SecretsDir $SecretsDir -TokenFileName $TokenFileName -NoBanner -SkipProbe
+        $installResult = Install-KriticalPax8Mcp -Agent $Agent -SecretsDir $SecretsDir -TokenFileName $TokenFileName -NoBanner -SkipProbe
     }
 
     Write-Host 'Probing mcp.pax8.com with new token...' -ForegroundColor DarkCyan
-    $probe = Invoke-KritPax8McpInitialize -Token $NewToken
+    $probe = Invoke-KriticalPax8McpInitialize -Token $NewToken
     if ($probe.Ok) {
-        $tools = Get-KritPax8McpToolList -Token $NewToken
+        $tools = Get-KriticalPax8McpToolList -Token $NewToken
         Write-Host ("  Server: " + $probe.ServerName + " v" + $probe.ServerVersion + " | tools: " + $tools.ToolCount) -ForegroundColor Green
     } else {
         Write-Host ('  [FAIL] ' + ($probe.Error ?? "HTTP $($probe.StatusCode)")) -ForegroundColor Red

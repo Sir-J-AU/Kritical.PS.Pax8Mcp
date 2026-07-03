@@ -2,9 +2,9 @@
 # Author: Joshua Finley - Kritical Pty Ltd
 
 BeforeAll {
-    $modPath = Join-Path $PSScriptRoot '..\..\src\Krit.Pax8Mcp.psd1'
+    $modPath = Join-Path $PSScriptRoot '..\..\src\Kritical.Pax8Mcp.psd1'
     Import-Module $modPath -Force
-    $script:Mod = Get-Module Krit.Pax8Mcp
+    $script:Mod = Get-Module Kritical.Pax8Mcp
     $script:TempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("krit-pax8-agt-" + [guid]::NewGuid())
     New-Item -ItemType Directory -Path $script:TempDir | Out-Null
 }
@@ -13,9 +13,9 @@ AfterAll {
     Remove-Item -LiteralPath $script:TempDir -Recurse -Force -ErrorAction SilentlyContinue
 }
 
-Describe 'Get-KritPax8AgentTargets' {
+Describe 'Get-KriticalPax8AgentTargets' {
     It 'returns rows for the canonical 6 agent targets' {
-        $rows = & $script:Mod { Get-KritPax8AgentTargets }
+        $rows = & $script:Mod { Get-KriticalPax8AgentTargets }
         $rows | Should -HaveCount 6
         ($rows | Select-Object -ExpandProperty Name) | Should -Contain 'claude'
         ($rows | Select-Object -ExpandProperty Name) | Should -Contain 'codex'
@@ -26,7 +26,7 @@ Describe 'Get-KritPax8AgentTargets' {
     }
 
     It 'every row has Path Format ConfigExists HostInstalled InstallHint' {
-        $rows = & $script:Mod { Get-KritPax8AgentTargets }
+        $rows = & $script:Mod { Get-KriticalPax8AgentTargets }
         foreach ($r in $rows) {
             $r.Path           | Should -Not -BeNullOrEmpty
             $r.Format         | Should -BeIn @('json','toml')
@@ -37,12 +37,12 @@ Describe 'Get-KritPax8AgentTargets' {
     }
 }
 
-Describe 'Write-KritPax8JsonAgentConfig' {
+Describe 'Write-KriticalPax8JsonAgentConfig' {
     It 'writes a JSON config from scratch with pax8 entry containing token header' {
         $target = Join-Path $script:TempDir 'fresh.json'
         $res = & $script:Mod {
             param($t)
-            Write-KritPax8JsonAgentConfig -Path $t -Token 'abcdefghijklmnopqrstuvwxyz0123456789' -IncludeOAuthEntry
+            Write-KriticalPax8JsonAgentConfig -Path $t -Token 'abcdefghijklmnopqrstuvwxyz0123456789' -IncludeOAuthEntry
         } $target
         Test-Path -LiteralPath $target | Should -BeTrue
         $obj = Get-Content -LiteralPath $target -Raw | ConvertFrom-Json
@@ -58,7 +58,7 @@ Describe 'Write-KritPax8JsonAgentConfig' {
         '{ "mcpServers": { "falcon-mcp": { "type": "stdio", "command": "uvx" } } }' | Set-Content -LiteralPath $target
         & $script:Mod {
             param($t)
-            Write-KritPax8JsonAgentConfig -Path $t -Token 'abcdefghijklmnopqrstuvwxyz0123456789'
+            Write-KriticalPax8JsonAgentConfig -Path $t -Token 'abcdefghijklmnopqrstuvwxyz0123456789'
         } $target | Out-Null
         $obj = Get-Content -LiteralPath $target -Raw | ConvertFrom-Json
         $obj.mcpServers.'falcon-mcp'.command | Should -Be 'uvx'
@@ -69,11 +69,11 @@ Describe 'Write-KritPax8JsonAgentConfig' {
         $target = Join-Path $script:TempDir 'idempotent.json'
         & $script:Mod {
             param($t)
-            Write-KritPax8JsonAgentConfig -Path $t -Token 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+            Write-KriticalPax8JsonAgentConfig -Path $t -Token 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
         } $target | Out-Null
         & $script:Mod {
             param($t)
-            Write-KritPax8JsonAgentConfig -Path $t -Token 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+            Write-KriticalPax8JsonAgentConfig -Path $t -Token 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
         } $target | Out-Null
         $obj = Get-Content -LiteralPath $target -Raw | ConvertFrom-Json
         # token should be updated, not added twice
@@ -84,7 +84,7 @@ Describe 'Write-KritPax8JsonAgentConfig' {
         $target = Join-Path $script:TempDir 'remove.json'
         & $script:Mod {
             param($t)
-            Write-KritPax8JsonAgentConfig -Path $t -Token 'cccccccccccccccccccccccccccccccccccc' -IncludeOAuthEntry
+            Write-KriticalPax8JsonAgentConfig -Path $t -Token 'cccccccccccccccccccccccccccccccccccc' -IncludeOAuthEntry
         } $target | Out-Null
         # Add a falcon entry
         $cfg = Get-Content -LiteralPath $target -Raw | ConvertFrom-Json -AsHashtable
@@ -93,7 +93,7 @@ Describe 'Write-KritPax8JsonAgentConfig' {
 
         & $script:Mod {
             param($t)
-            Write-KritPax8JsonAgentConfig -Path $t -Token 'cccccccccccccccccccccccccccccccccccc' -RemoveOnly
+            Write-KriticalPax8JsonAgentConfig -Path $t -Token 'cccccccccccccccccccccccccccccccccccc' -RemoveOnly
         } $target | Out-Null
         $obj = Get-Content -LiteralPath $target -Raw | ConvertFrom-Json
         $obj.mcpServers.'falcon-mcp' | Should -Not -BeNullOrEmpty
@@ -102,12 +102,12 @@ Describe 'Write-KritPax8JsonAgentConfig' {
     }
 }
 
-Describe 'Write-KritPax8TomlAgentConfig' {
+Describe 'Write-KriticalPax8TomlAgentConfig' {
     It 'appends an [mcp_servers.pax8] block to a fresh toml file' {
         $target = Join-Path $script:TempDir 'fresh.toml'
         & $script:Mod {
             param($t)
-            Write-KritPax8TomlAgentConfig -Path $t -Token 'dddddddddddddddddddddddddddddddddddd'
+            Write-KriticalPax8TomlAgentConfig -Path $t -Token 'dddddddddddddddddddddddddddddddddddd'
         } $target | Out-Null
         $body = Get-Content -LiteralPath $target -Raw
         $body | Should -Match '\[mcp_servers\.pax8\]'
@@ -128,7 +128,7 @@ url = "https://OLD"
 
         & $script:Mod {
             param($t)
-            Write-KritPax8TomlAgentConfig -Path $t -Token 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+            Write-KriticalPax8TomlAgentConfig -Path $t -Token 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
         } $target | Out-Null
 
         $body = Get-Content -LiteralPath $target -Raw
@@ -151,7 +151,7 @@ url = "https://mcp.pax8.com/v1/mcp"
 
         & $script:Mod {
             param($t)
-            Write-KritPax8TomlAgentConfig -Path $t -Token 'f' -RemoveOnly
+            Write-KriticalPax8TomlAgentConfig -Path $t -Token 'f' -RemoveOnly
         } $target | Out-Null
 
         $body = Get-Content -LiteralPath $target -Raw

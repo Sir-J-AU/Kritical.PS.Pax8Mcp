@@ -9,14 +9,14 @@ BeforeDiscovery {
 }
 
 BeforeAll {
-    $modPath = Join-Path $PSScriptRoot '..\..\src\Krit.Pax8Mcp.psd1'
+    $modPath = Join-Path $PSScriptRoot '..\..\src\Kritical.Pax8Mcp.psd1'
     Import-Module $modPath -Force
-    $script:Mod = Get-Module Krit.Pax8Mcp
+    $script:Mod = Get-Module Kritical.Pax8Mcp
 }
 
 Describe 'OAuth discovery (no token required)' {
     It 'mcp.pax8.com OAuth metadata is reachable and well-formed' {
-        $r = & $script:Mod { Test-KritPax8McpOAuthDiscovery }
+        $r = & $script:Mod { Test-KriticalPax8McpOAuthDiscovery }
         $r.Ok                 | Should -BeTrue
         $r.Issuer             | Should -Match 'mcp\.pax8\.com'
         $r.AuthorizeEndpoint  | Should -Match '/authorize'
@@ -27,25 +27,25 @@ Describe 'OAuth discovery (no token required)' {
 
 Describe 'Token-auth MCP path (requires Kritical secrets folder)' -Skip:(-not $HaveSecrets) {
     It 'initialize handshake returns server name pax8-mcp-server' {
-        $token = & $script:Mod { Read-KritPax8Token }
-        $r = & $script:Mod { param($t) Invoke-KritPax8McpInitialize -Token $t } $token
+        $token = & $script:Mod { Read-KriticalPax8Token }
+        $r = & $script:Mod { param($t) Invoke-KriticalPax8McpInitialize -Token $t } $token
         $r.Ok | Should -BeTrue
         $r.ServerName | Should -Be 'pax8-mcp-server'
         $r.ServerVersion | Should -Not -BeNullOrEmpty
     }
 
     It 'tools/list returns at least 1 tool' {
-        $token = & $script:Mod { Read-KritPax8Token }
-        $r = & $script:Mod { param($t) Get-KritPax8McpToolList -Token $t } $token
+        $token = & $script:Mod { Read-KriticalPax8Token }
+        $r = & $script:Mod { param($t) Get-KriticalPax8McpToolList -Token $t } $token
         $r.Ok | Should -BeTrue
         $r.ToolCount | Should -BeGreaterOrEqual 1
         $r.Tools | Should -Contain 'pax8-list-companies'
     }
 }
 
-Describe 'Test-KritPax8Mcp comprehensive gate set' {
+Describe 'Test-KriticalPax8Mcp comprehensive gate set' {
     It 'returns a structured result with Gates / Passed / Failed / Total / Ok' {
-        $r = Test-KritPax8Mcp -Quiet
+        $r = Test-KriticalPax8Mcp -Quiet
         $r.Gates  | Should -Not -BeNullOrEmpty
         $r.Total  | Should -BeGreaterOrEqual 6
         $r.Passed | Should -BeOfType [int]
@@ -54,13 +54,13 @@ Describe 'Test-KritPax8Mcp comprehensive gate set' {
     }
 
     It 'reports G3 OAuth discovery PASS regardless of token presence' {
-        $r = Test-KritPax8Mcp -Quiet
+        $r = Test-KriticalPax8Mcp -Quiet
         $g3 = $r.Gates | Where-Object Gate -eq 'G3.OAuthDiscovery'
         $g3.Pass | Should -BeTrue
     }
 
     It 'reports critical G1-G5 PASS when secrets folder + token present' -Skip:(-not $HaveSecrets) {
-        $r = Test-KritPax8Mcp -Quiet
+        $r = Test-KriticalPax8Mcp -Quiet
         $criticalGates = @('G1.SecretsFolder','G2.TokenSane','G3.OAuthDiscovery','G4.McpInitialize','G5.ToolsList')
         foreach ($g in $criticalGates) {
             $row = $r.Gates | Where-Object Gate -eq $g

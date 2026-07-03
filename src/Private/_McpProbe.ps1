@@ -1,4 +1,4 @@
-function Invoke-KritPax8McpInitialize {
+function Invoke-KriticalPax8McpInitialize {
     <#
     .SYNOPSIS
         POSTs a JSON-RPC initialize to the Pax8 MCP endpoint with the token header.
@@ -39,7 +39,7 @@ function Invoke-KritPax8McpInitialize {
     }
 }
 
-function Get-KritPax8McpToolList {
+function Get-KriticalPax8McpToolList {
     [CmdletBinding()]
     [OutputType([pscustomobject])]
     param(
@@ -69,7 +69,7 @@ function Get-KritPax8McpToolList {
     }
 }
 
-function Test-KritPax8McpOAuthDiscovery {
+function Test-KriticalPax8McpOAuthDiscovery {
     <#
     .SYNOPSIS
         Validates the OAuth-discovery endpoint is responding correctly. Read-only.

@@ -1,4 +1,4 @@
-function Get-KritPax8BannerCanonicalPath {
+function Get-KriticalPax8BannerCanonicalPath {
     [CmdletBinding()]
     [OutputType([string])]
     param()
@@ -17,7 +17,7 @@ function Get-KritPax8BannerCanonicalPath {
     return $null
 }
 
-function Get-KritPax8Banner {
+function Get-KriticalPax8Banner {
     <#
     .SYNOPSIS
         Returns the canonical Kritical banner verbatim (SirJ's Deaddrop / A Seriously Kritical(TM) Production).
@@ -26,7 +26,7 @@ function Get-KritPax8Banner {
         edit to the master copy at KriticalLogo.txt propagates to every consumer.
         Falls back to the module-bundled asset if the secrets folder is not present.
     .EXAMPLE
-        Get-KritPax8Banner -Title 'Install'
+        Get-KriticalPax8Banner -Title 'Install'
     .NOTES
         Author: Joshua Finley - Kritical Pty Ltd
     #>
@@ -42,7 +42,7 @@ function Get-KritPax8Banner {
         if ($Title) { $line += " - $Title" }
         return $line
     }
-    if (-not $LogoPath) { $LogoPath = Get-KritPax8BannerCanonicalPath }
+    if (-not $LogoPath) { $LogoPath = Get-KriticalPax8BannerCanonicalPath }
     if (-not $LogoPath -or -not (Test-Path -LiteralPath $LogoPath)) {
         $line = "[Kritical(TM)] A Seriously Kritical Production | +61 1300 274 655 | sales at kritical dot net"
         if ($Title) { $line += "`n--- $Title ---" }
@@ -53,12 +53,12 @@ function Get-KritPax8Banner {
     return $logo
 }
 
-function Write-KritPax8Banner {
+function Write-KriticalPax8Banner {
     <#
     .SYNOPSIS
         Writes the canonical Kritical banner to host with brand colours.
     .EXAMPLE
-        Write-KritPax8Banner -Title 'Health Probe' -Compact
+        Write-KriticalPax8Banner -Title 'Health Probe' -Compact
     #>
     [CmdletBinding()]
     param(
@@ -68,7 +68,7 @@ function Write-KritPax8Banner {
         [string] $LogoPath
     )
     $useColor = -not $NoColor.IsPresent -and $null -ne $Host.UI.RawUI -and $null -ne $Host.UI.RawUI.ForegroundColor
-    $banner = Get-KritPax8Banner -Title $Title -Compact:$Compact -LogoPath $LogoPath
+    $banner = Get-KriticalPax8Banner -Title $Title -Compact:$Compact -LogoPath $LogoPath
     if (-not $useColor) {
         Write-Output $banner
         return

@@ -1,4 +1,4 @@
-function Get-KritPax8McpStatus {
+function Get-KriticalPax8McpStatus {
     <#
     .SYNOPSIS
         Reports the current Pax8 MCP wiring state across every supported agent on this machine.
@@ -9,7 +9,7 @@ function Get-KritPax8McpStatus {
         token-auth header is configured.
 
     .EXAMPLE
-        Get-KritPax8McpStatus | Format-Table -AutoSize
+        Get-KriticalPax8McpStatus | Format-Table -AutoSize
 
     .NOTES
         Author: Joshua Finley - Kritical Pty Ltd
@@ -19,11 +19,11 @@ function Get-KritPax8McpStatus {
     param(
         [switch] $NoBanner
     )
-    if (-not $NoBanner.IsPresent) { Write-KritPax8Banner -Title 'Pax8 MCP Status' -Compact }
-    $tokenPath = Get-KritPax8TokenPath
+    if (-not $NoBanner.IsPresent) { Write-KriticalPax8Banner -Title 'Pax8 MCP Status' -Compact }
+    $tokenPath = Get-KriticalPax8TokenPath
     $tokenPresent = Test-Path -LiteralPath $tokenPath
     $rows = @()
-    foreach ($t in (Get-KritPax8AgentTargets)) {
+    foreach ($t in (Get-KriticalPax8AgentTargets)) {
         $entryPax8 = $false; $entryOAuth = $false; $hasTokenHeader = $false
         if ($t.ConfigExists) {
             $raw = Get-Content -LiteralPath $t.Path -Raw -ErrorAction SilentlyContinue

@@ -1,5 +1,5 @@
 @{
-    RootModule        = 'Krit.Pax8Mcp.psm1'
+    RootModule        = 'Kritical.Pax8Mcp.psm1'
     ModuleVersion     = '1.0.0'
     GUID              = 'a5f8e4c2-6b3d-4a1e-9c7f-2d8b5e0a3f1c'
     Author            = 'Joshua Finley'
@@ -10,15 +10,15 @@
     CompatiblePSEditions = @('Desktop','Core')
 
     FunctionsToExport = @(
-        'Install-KritPax8Mcp'
-        'Get-KritPax8McpStatus'
-        'Test-KritPax8Mcp'
-        'Test-KritPax8Secrets'
-        'Update-KritPax8McpToken'
-        'Remove-KritPax8Mcp'
-        'Clear-KritPax8IngestedLogs'
-        'Write-KritPax8Banner'
-        'Get-KritPax8Banner'
+        'Install-KriticalPax8Mcp'
+        'Get-KriticalPax8McpStatus'
+        'Test-KriticalPax8Mcp'
+        'Test-KriticalPax8Secrets'
+        'Update-KriticalPax8McpToken'
+        'Remove-KriticalPax8Mcp'
+        'Clear-KriticalPax8IngestedLogs'
+        'Write-KriticalPax8Banner'
+        'Get-KriticalPax8Banner'
     )
     CmdletsToExport   = @()
     VariablesToExport = @()

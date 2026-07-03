@@ -1,7 +1,7 @@
-function Clear-KritPax8IngestedLogs {
+function Clear-KriticalPax8IngestedLogs {
     <#
     .SYNOPSIS
-        Cleans up Krit.Pax8Mcp test-output, wave-receipt and run-log files that
+        Cleans up Kritical.Pax8Mcp test-output, wave-receipt and run-log files that
         have been ingested into a downstream sink (Application Insights / PaxBrain
         SQL / OneDrive cold archive). Files NOT yet ingested are preserved.
 
@@ -13,7 +13,7 @@ function Clear-KritPax8IngestedLogs {
             - UNKNOWN   -> keep (default-safe — never delete without proof)
 
         Default sinks scanned:
-            * $env:LOCALAPPDATA\Kritical\Krit.Pax8Mcp\test-output
+            * $env:LOCALAPPDATA\Kritical\Kritical.Pax8Mcp\test-output
             * <repo>\tests\output   (legacy — only swept if -IncludeRepoTestOutput)
             * Any -ExtraPath the operator passes
 
@@ -37,13 +37,13 @@ function Clear-KritPax8IngestedLogs {
         Standard PowerShell — show what would be deleted without doing it.
 
     .EXAMPLE
-        Clear-KritPax8IngestedLogs -WhatIf
+        Clear-KriticalPax8IngestedLogs -WhatIf
 
     .EXAMPLE
-        Clear-KritPax8IngestedLogs -Soft
+        Clear-KriticalPax8IngestedLogs -Soft
 
     .EXAMPLE
-        Clear-KritPax8IngestedLogs -ExtraPath C:\temp\krit-logs -IngestManifestPath C:\ingested.csv
+        Clear-KriticalPax8IngestedLogs -ExtraPath C:\temp\krit-logs -IngestManifestPath C:\ingested.csv
 
     .NOTES
         Author: Joshua Finley - Kritical Pty Ltd
@@ -59,11 +59,11 @@ function Clear-KritPax8IngestedLogs {
         [switch]   $NoBanner
     )
 
-    if (-not $NoBanner.IsPresent) { Write-KritPax8Banner -Title 'Clear Ingested Logs' -Compact }
+    if (-not $NoBanner.IsPresent) { Write-KriticalPax8Banner -Title 'Clear Ingested Logs' -Compact }
 
     # Build scan paths
     $paths = [System.Collections.Generic.List[string]]::new()
-    $defaultOut = Join-Path $env:LOCALAPPDATA 'Kritical\Krit.Pax8Mcp\test-output'
+    $defaultOut = Join-Path $env:LOCALAPPDATA 'Kritical\Kritical.Pax8Mcp\test-output'
     if (Test-Path -LiteralPath $defaultOut) { $paths.Add($defaultOut) }
     if ($IncludeRepoTestOutput.IsPresent) {
         $repoOut = Join-Path (Split-Path -Parent (Split-Path -Parent $PSCommandPath)) 'tests\output'

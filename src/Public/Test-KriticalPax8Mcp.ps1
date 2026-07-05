@@ -49,10 +49,13 @@ function Test-KriticalPax8Mcp {
 
     # G2
     $token = $null
+    $tokenErr = $null
     if ($g1) {
-        try { $token = Read-KriticalPax8Token -SecretsDir $SecretsDir -TokenFileName $TokenFileName } catch { }
+        # .5231 (lens-hunt): capture (don't swallow) the read failure so G2's Detail
+        # explains WHY the token is missing instead of an unexplained length=0.
+        try { $token = Read-KriticalPax8Token -SecretsDir $SecretsDir -TokenFileName $TokenFileName } catch { $tokenErr = $_.Exception.Message }
     }
-    $g2Detail = if ($token) { "length=" + $token.Length } else { "length=0" }
+    $g2Detail = if ($token) { "length=" + $token.Length } elseif ($tokenErr) { "length=0 err=" + $tokenErr } else { "length=0" }
     & $addGate 'G2.TokenSane' ([bool]$token) $g2Detail
 
     # G3

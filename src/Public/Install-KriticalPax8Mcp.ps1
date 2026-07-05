@@ -95,6 +95,19 @@ function Install-KriticalPax8Mcp {
         return
     }
 
+    # .5231 (lens-hunt): validate the token against the live server BEFORE rewriting any
+    # agent config. Previously configs were written first and only probed at the end, so a
+    # bad/expired token left every wired agent in a broken state the operator wouldn't notice
+    # until restart. Fail fast here (skippable with -SkipProbe for offline installs).
+    if (-not $SkipProbe.IsPresent) {
+        Write-Host "Pre-validating token against mcp.pax8.com before touching agent configs..." -ForegroundColor DarkCyan
+        $pre = Invoke-KriticalPax8McpInitialize -Token $token
+        if (-not $pre.Ok) {
+            throw ("Token pre-validation failed — no agent configs modified. " + ($pre.Error ? $pre.Error : "HTTP $($pre.StatusCode)") + " (use -SkipProbe to wire anyway).")
+        }
+        Write-Host ("  Token valid — server: " + $pre.ServerName + " v" + $pre.ServerVersion) -ForegroundColor Green
+    }
+
     $rows = @()
     foreach ($t in $selection) {
         if ($PSCmdlet.ShouldProcess($t.Path, "Wire pax8 MCP")) {

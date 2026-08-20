@@ -12,7 +12,7 @@
 $lens = 'C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical.Lens'
 Import-Module "$lens\src\Kritical.Lens.psd1" -Force
 
-<!-- BEGIN KRITICAL-SWARM-TRACKING v1 src=1fca97e9bca0 — GENERATED from RULE ZERO + RULE ZERO-B in C:\Users\joshl\.claude\CLAUDE.md by Kritical.Lens/scripts/Update-KritRepoSwarmTrackingBlock.ps1. DO NOT HAND-EDIT INSIDE THESE MARKERS: edit the source file and re-run the propagator. -->
+<!-- BEGIN KRITICAL-SWARM-TRACKING v1 src=6262a7e95e44 — GENERATED from RULE ZERO + RULE ZERO-B in C:\Users\joshl\.claude\CLAUDE.md by Kritical.Lens/scripts/Update-KritRepoSwarmTrackingBlock.ps1. DO NOT HAND-EDIT INSIDE THESE MARKERS: edit the source file and re-run the propagator. -->
 # 🔴 SWARM TRACKING + RULE ZERO (propagated — one authority, do not hand-edit)
 
 > This section is **generated**. The single authority is `RULE ZERO` + `RULE ZERO-B` at the
@@ -177,14 +177,24 @@ Committed `80ef739` (2026-08-11), carried through `ed32a18` (PR #26). **EDIT THE
 | licence-authority | 4325 | 35025 | 56025 |
 - `listenerPolicy` per entry: `owned-healthy` (a named ownerService must hold it) or `must-be-free`.
 - DEV `exposeOnTailscale:false`; TEST and PROD `exposeOnTailscale:true`.
-- Per the contract as written, these run on host **STACKTRACE**; the W365 box hosts only
-  `KriticalNodeJSService-VaultQueueRunner` (no port — outbound poller).
-
-🔴 **UNRESOLVED CONFLICT — STATE IT, DO NOT SILENTLY PICK A SIDE.** The contract (2026-08-11) puts these
-on STACKTRACE. The operator's directive (2026-08-13) is **ALL DEV AND ALL DATABASES OFF STACKTRACE onto
-the W365 box**. Both are real: the contract is CURRENT BUILT STATE, the directive is TARGET STATE. The
-migration is **tracked work, NOT done**. Until it is done, do not claim either as "the" answer — say
-which one you mean.
+- 🔴 **RESOLVED 2026-08-13 — the contract now declares host `CPC-Joshu-5919S` (the W365 box) for
+  dev/test/prod, not STACKTRACE.** The STACKTRACE-vs-W365 conflict recorded below (this same section,
+  previously "UNRESOLVED CONFLICT") is CLOSED: the operator's 2026-08-13 "ALL DEV AND ALL DATABASES
+  OFF STACKTRACE onto the W365 box" directive is the decision, and the JSON contract
+  (`vault-two-host-service-port-contract.json`, `environments.dev/test/prod.host`) was edited to match
+  it the same day. **STACKTRACE now appears in the contract's `hosts` block only as
+  `role: "orchestration-workstation"`** — no environment, no expectedServices, no DB. The port
+  FAMILIES did not change (still DEV 4320-4325 / TEST 35020-35025 / PROD 56020-56025) — only the HOST
+  moved. The Pester suite (`Test-VaultTwoHostServicePortContract.Tests.ps1`) was updated in lockstep
+  and re-proven 10/10 GREEN against the new host, including a dedicated test asserting every
+  environment is bound to `CPC-Joshu-5919S` and NOT `STACKTRACE`.
+- 🔴 **CONFIG CHANGE ONLY — NOT YET APPLIED ON THE BOX.** Flipping the JSON's declared host is a design
+  decision landing in config; it does NOT install anything. Ground truth measured 2026-08-13: the box
+  has ZERO of the six-service SCM graph installed (`C:\ProgramData\Kritical\scm\` does not exist there
+  at all — only Stacktrace has the real `kritical-scm.exe` package), and only ONE of the eight named
+  services (`KriticalNodeJSService-VaultQueueRunner`) is registered on the box. Re-homing DEV/TEST/PROD
+  to the box for real requires a genuine INSTALL step on `CPC-Joshu-5919S` — tracked work, not done —
+  before this contract's `Install`/`Set`/`Repair` actions can be run there with `-Apply`.
 
 🔴 **NEVER APPLIED — the ports are genuinely stealable right now.** `-Apply` has never been run on either
 machine (no `Kritical-Vault-*` firewall rules, no `C:\ProgramData\Kritical\rollback` receipts).
@@ -241,6 +251,81 @@ turn.** Profanity in quoted operator directives carries emphasis but no informat
 - 🔴 **NEVER TOUCH `docs\human\`** — hand-authored, no generator may ever write there. Also never touch
   anything marked FROZEN / SUPERSEDED / ARCHIVED, or `Github-SecretsOutsideOfGitRepos`.
 - Every run keeps a reversible archive of originals + a receipt (what changed, how many tokens saved).
+
+## 🔴 PRESERVATION IS NOT DISPOSITION — SAVE IT, THEN DECIDE IT. NEVER ABANDON IT.
+(Operator directive 2026-08-13: *"if u have to preserve branches to ensure all data saved out do that but
+then dont abandon, mark archive or merge or whatever it was"*.)
+
+**Saving work and DECIDING about work are two different jobs, and stopping after the first one is a
+failure mode of its own.** A `preserve/*`, `salvage/*`, `rescue/*` or `wip/*` branch pushed "so nothing is
+lost" and then never revisited is not safety — it is deferred confusion. The estate already carries dozens
+of them, and nobody can now say which hold live work and which are dead weight, which is exactly why a
+branch sweep has to be run from scratch every time somebody panics.
+
+**EVERY preserved artefact gets a DISPOSITION, recorded, in the same pass that preserves it:**
+| Disposition | Means | Action |
+|---|---|---|
+| **MERGE** | the content is still wanted | merge to the canonical branch (operator decision if diverged) |
+| **ARCHIVE** | superseded, but keep the history | tag it (`archive/<name>-<date>`), record WHY and WHAT SUPERSEDED IT, then it may be removed from the active branch list |
+| **SUPERSEDED-SAFE-TO-DROP** | its content provably already exists on the canonical branch | prove it (`git cherry`/`git log --cherry-mark`), record the proof, then it can go |
+| **UNDECIDED** | genuinely needs the operator | 🔴 a VALID entry — but it must be WRITTEN DOWN with the question, never left implicit |
+- **The disposition lives in the repo's own status authority**, not in a chat reply — same rule as any
+  other finding (LAW 2 / RULE ZERO). A disposition that exists only in an agent's summary does not exist.
+- 🔴 **NEVER DELETE A BRANCH TO "TIDY UP".** Disposition is a decision record, not a licence to prune.
+  Branch deletion stays forbidden; ARCHIVE means tag-and-record, not remove.
+- **Order is fixed and non-negotiable: PRESERVE FIRST, DECIDE SECOND.** Never let a pending decision delay
+  getting the bytes safe — but never let getting the bytes safe substitute for the decision.
+
+## 🔴 THREE DETECTORS THAT LIED — EARNED 2026-08-13. PROVE THE DETECTOR RAN BEFORE BELIEVING IT.
+**All three produced confident, completely wrong answers within hours of each other. An empty result is
+not evidence of absence — it is evidence the detector produced nothing.**
+
+**1. 🔴 RETRACTED 2026-08-14 — THE PROPAGATOR WAS FINE. *MY VERIFICATION* WAS THE BROKEN DETECTOR.**
+I claimed all night that `Kritical.Lens\scripts\Update-KritRepoSwarmTrackingBlock.ps1` reported *"95 file(s)
+written"* and wrote **nothing**, and told the operator not to trust any repo's CLAUDE.md.
+**That was FALSE. Re-verified with a path-safe search: the content is present in 88 files. The broadcast
+landed.**
+**THE ACTUAL DEFECT WAS MY OWN CHECK:** `grep -l "phrase" $(cat filelist)` **WORD-SPLITS ON SPACES**, and
+every path in this estate contains them — `C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\...`. The
+paths shattered at `OneDrive`, ` - `, `Kritical`, `Pty`, `Ltd`, so grep matched nothing and returned 0.
+I read 0 as "the broadcast failed" and escalated it into the law itself.
+🔴 **THE RULE THAT ACTUALLY MATTERS: EVERY PATH IN THIS ESTATE CONTAINS SPACES. Any shell construct that
+word-splits an unquoted path returns a SILENT FALSE NEGATIVE** — `$(cat list)`, unquoted `$var`, bare
+`for f in $(...)`. Use the ripgrep-backed Grep tool, or `rg --files-from`, or quote every expansion
+(`"$f"`). A 0-result from a space-containing path is a BROKEN QUERY until proven otherwise.
+🔴 **AND THE META-LESSON, which is the expensive one:** *before believing a detector says something is
+broken, prove the DETECTOR ran correctly.* I applied that rule to the propagator, the box's git, and the
+reparse points — and failed to apply it to my own grep. **Verify a NEGATIVE result the same way you would
+verify a positive one.** A broadcast is still proven at the destination, never by the sender — but the
+destination check must itself be sound.
+
+**2. A HOLLOW ONEDRIVE PLACEHOLDER READ AS A DESTROYED REPO** — and then twice mis-diagnosed by me.
+`Github\Kritical.Lens.Toolkit` and `Github\Kritical.SCXCode` show `Mode: l----`, `Attributes: Directory,
+ReparsePoint`, contain only a dehydrated `.git\index`, and `.LinkType`/`.Target` are **null**. A scan called
+them destroyed repos and the operator was told his estate was wiped. **They are neither corruption NOR
+NTFS junctions — they are OneDrive Cloud-Files PLACEHOLDER directories.**
+🔴 **THE DISCRIMINATOR IS THE RAW REPARSE TAG, NOT `Get-Item`:** `fsutil reparsepoint query "<path>"` →
+**`0x9000*01a` = OneDrive placeholder** (`0x9000e01a` in-sync, `0x9000601a` not-fully-synced);
+**`0xA0000003` = real junction, `0xA000000C` = symlink** (these have a non-null `.Target`). A null Target on
+a ReparsePoint is AMBIGUOUS — resolve the tag, never assume. **The tag alone never proves brokenness
+either** — a control folder carried the identical rare tag with 9 healthy children; only a CONTENT check
+decides.
+**Measured estate-wide:** 53,100 reparse points, 52,921 ordinary OneDrive placeholders, 179 genuine NTFS
+junctions (178 healthy), 87 git worktree/submodule `.git`-as-file constructs (60 submodules — the whole
+`Kritical.Lens\components\*` tree — all resolving). **Genuinely broken estate-wide: 3.**
+🔴 **Lens is a SUBMODULE SUPERPROJECT** — real content lives at `Kritical.Lens\components\<kind>\<name>`
+(Toolkit 283 files under `data-infra`, SCXCode 464 files under `external-lineage`). A top-level `Github\<name>`
+dir of the same name is very often just a hollow placeholder. **Check the submodule path before panicking.**
+
+**3. GIT SILENTLY REFUSING EVERY COMMAND ON THE W365 BOX.**
+A sweep of **266 repos** on the box returned ZERO hits — because git refused every call with **"dubious
+ownership"** (repos owned by `AzureAD\JoshuaFinley`, running as `vault-service`). The scan looked clean; git
+had never run. Fix: `git config --global --add safe.directory '*'` for that account.
+🔴 **Any git-based conclusion about the box made before that fix is a FALSE NEGATIVE — re-run it.**
+
+**Genuinely broken and worth fixing (found by the census, not previously known):**
+`KRTPax8ToShopifyConnector\scripts\shopify-brain` → `Github\ShopifyBrain` — dangling junction, target does
+not exist. And `KRTPax8ToShopifyConnector\scripts\scxcode` resolves but points AT the hollow placeholder.
 
 ## 🔴 TRACK THE BABBLE AGAINST THE ARCHITECTURE — PROGRAMMATICALLY, START AND END OF EVERY TURN
 (Operator directive 2026-08-13: *"taling to es at start and end of turn tracking any of your babble

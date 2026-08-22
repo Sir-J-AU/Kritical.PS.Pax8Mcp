@@ -104,8 +104,11 @@ function Clear-KriticalPax8IngestedLogs {
               $f = $_.FullName
               # Determine ingestion status
               $status = 'UNKNOWN'
-              if (Test-Path -LiteralPath ("$f.ingested.*")) { $status = 'INGESTED' }
-              elseif ((Get-ChildItem -LiteralPath (Split-Path -Parent $f) -Filter ((Split-Path -Leaf $f) + '.ingested.*') -ErrorAction SilentlyContinue)) { $status = 'INGESTED' }
+              # .5231 (lens-hunt): dropped a `Test-Path -LiteralPath "$f.ingested.*"` check —
+              # in -LiteralPath mode the * is a literal char, so it never matched an
+              # `<file>.ingested.<utc>` marker and ingested files were wrongly kept as UNKNOWN.
+              # The Get-ChildItem -Filter glob below is the correct marker probe.
+              if ((Get-ChildItem -LiteralPath (Split-Path -Parent $f) -Filter ((Split-Path -Leaf $f) + '.ingested.*') -ErrorAction SilentlyContinue)) { $status = 'INGESTED' }
               elseif ($manifestSet.Contains($f)) { $status = 'INGESTED' }
               elseif (Test-Path -LiteralPath ("$f.sink.json")) {
                   try {
@@ -128,7 +131,11 @@ function Clear-KriticalPax8IngestedLogs {
                   if ($PSCmdlet.ShouldProcess($f, ($Soft.IsPresent ? 'Move to .recycle/' : 'Delete (ingested)'))) {
                       try {
                           if ($Soft.IsPresent) {
-                              $recycle = Join-Path $dir (".recycle\" + (Get-Date).ToUniversalTime().ToString('yyyyMMdd-HHmmssZ'))
+                              # .5231 (lens-hunt): second-resolution timestamps collide when the
+                              # function runs twice inside the same second, and a same-named file in
+                              # two source dirs would overwrite inside the shared recycle bucket.
+                              # Append a short random suffix per destination to keep the audit trail intact.
+                              $recycle = Join-Path $dir (".recycle\" + (Get-Date).ToUniversalTime().ToString('yyyyMMdd-HHmmssZ') + '-' + ([guid]::NewGuid().ToString('N').Substring(0,6)))
                               New-Item -ItemType Directory -Path $recycle -Force -ErrorAction SilentlyContinue | Out-Null
                               Move-Item -LiteralPath $f -Destination (Join-Path $recycle (Split-Path -Leaf $f)) -Force
                               $row.Action = 'RECYCLED'

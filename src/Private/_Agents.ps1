@@ -53,11 +53,16 @@ function Write-KriticalPax8JsonAgentConfig {
         [switch] $RemoveOnly
     )
     # Resolve Python for safe JSON editing (handles case-collision keys etc.)
+    # .5231 (lens-hunt): drop the hardcoded per-user (C:\Users\joshl) python path —
+    # it is non-portable across operator machines. Honour an optional override via
+    # $env:KRITICAL_PAX8_PYTHON, then fall back to well-known versioned install roots.
     $pyExe = $null
-    foreach ($p in @(
-        'C:\Users\joshl\AppData\Local\Python\pythoncore-3.14-64\python.exe',
+    $pyCandidates = @()
+    if ($env:KRITICAL_PAX8_PYTHON) { $pyCandidates += $env:KRITICAL_PAX8_PYTHON }
+    $pyCandidates += @(
         'C:\Python314\python.exe','C:\Python313\python.exe','C:\Python312\python.exe','C:\Python311\python.exe'
-    )) { if (Test-Path -LiteralPath $p) { $pyExe = $p; break } }
+    )
+    foreach ($p in $pyCandidates) { if ($p -and (Test-Path -LiteralPath $p)) { $pyExe = $p; break } }
     if (-not $pyExe) {
         foreach ($n in 'py.exe','python3.14.exe','python.exe','python3.exe') {
             $c = Get-Command $n -ErrorAction SilentlyContinue
@@ -81,9 +86,15 @@ function Write-KriticalPax8JsonAgentConfig {
     $skipOAuth = if ($IncludeOAuthEntry.IsPresent) { '0' } else { '1' }
     $remove    = if ($RemoveOnly.IsPresent) { '1' } else { '0' }
 
+    # .5231 (lens-hunt): pass $Path and $McpEndpoint into Python via the environment
+    # rather than interpolating them into the source string. Interpolating a path
+    # containing a single-quote or trailing backslash (e.g. C:\Users\bob\ or ...'s folder\)
+    # broke the r'...' literal and could inject arbitrary Python; the same held for a
+    # crafted $McpEndpoint bleeding into the JSON. env vars are opaque to the parser.
     $pyCode = @"
 import json,sys,os
-path = r'$Path'
+path = os.environ['KRIT_PAX8_CFG_PATH']
+endpoint = os.environ['KRIT_PAX8_ENDPOINT']
 token = sys.stdin.read().strip()
 skip_oauth = '$skipOAuth' == '1'
 remove_only = '$remove' == '1'
@@ -100,18 +111,25 @@ if remove_only:
 else:
     mcp['pax8'] = {
         'type':'http',
-        'url':'$McpEndpoint',
+        'url':endpoint,
         'headers': {'x-pax8-mcp-token': token}
     }
     if not skip_oauth:
-        mcp['pax8-oauth'] = {'type':'http','url':'$McpEndpoint'}
+        mcp['pax8-oauth'] = {'type':'http','url':endpoint}
     elif 'pax8-oauth' in mcp:
         del mcp['pax8-oauth']
 with open(path,'w',encoding='utf-8') as f:
     json.dump(d,f,indent=2,ensure_ascii=False)
 print('OK keys=' + ','.join(sorted(mcp.keys())))
 "@
-    $result = $Token | & $pyExe -c $pyCode
+    $env:KRIT_PAX8_CFG_PATH = $Path
+    $env:KRIT_PAX8_ENDPOINT = $McpEndpoint
+    try {
+        $result = $Token | & $pyExe -c $pyCode
+    } finally {
+        Remove-Item Env:\KRIT_PAX8_CFG_PATH -ErrorAction SilentlyContinue
+        Remove-Item Env:\KRIT_PAX8_ENDPOINT -ErrorAction SilentlyContinue
+    }
     return [pscustomobject]@{
         Path       = $Path
         Backup     = $bak

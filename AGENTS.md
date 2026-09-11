@@ -42,8 +42,8 @@ Estate-wide (all repos at once):
 | Semantic-vs-raw delta | `scripts/output/lens-sweep/<utc>/Kritical.Lens.CompareAndBounce.json` | `Invoke-KriticalLensCompareAndBounce` |
 | Per-language element/call/edge index | `scripts/output/lens-sweep/<utc>/Language.<X>.json` | `Invoke-KriticalLensLanguageSweep` |
 | Sweep receipt (what ran, what skipped, why) | `scripts/output/lens-sweep/<utc>/sweep-receipt-<utc>.json` | `Invoke-KriticalLensSweep` |
-| Raw git corpus (every commit, every blob) | SQL Server on the **W365 box** `CPC-Joshu-5919S`, instance `SQLEXPRESS` (TCP **49473** — SQL Browser is stopped, connect by explicit port, never the instance name), database `KritLens_Kritical_PS_Pax8Mcp` (tables `lens.git_corpus_version` / `lens.git_corpus_blob`). CORRECTED 2026-08-25 (operator ruling): the laptop's local `.\SQLEXPRESS` copy is DEAD — never read or write it, and do not treat it as a fallback. | `Invoke-KritLensGitCorpusFullIngest` |
-| Semantic parse warehouse (shared, all repos) | SQL Server on the **W365 box** `CPC-Joshu-5919S`, instance `SQLEXPRESS` (TCP **49473**, explicit port — SQL Browser stopped), database `KriticalBrain`, schema `lens`. CORRECTED 2026-08-25 (operator ruling): re-homing is DONE, not outstanding; the laptop's `.\SQLEXPRESS` `KriticalBrain` is DEAD, never a fallback. | language ingesters |
+| Raw git corpus (every commit, every blob) | SQL Server `.\SQLEXPRESS` database `KritLens_Kritical_PS_Pax8Mcp` (tables `lens.git_corpus_version` / `lens.git_corpus_blob`) | `Invoke-KritLensGitCorpusFullIngest` |
+| Semantic parse warehouse (shared, all repos) | SQL Server `.\SQLEXPRESS` database `KriticalBrain`, schema `lens` | language ingesters |
 
 Corpus freshness for this repo:
 
@@ -58,20 +58,20 @@ language or domain in this repo.
 
 | Analyzer | Applies here | Why |
 | --- | --- | --- |
-| `Kritical.Lens.PSGraph` | YES (always runs) | 0 PowerShell file(s) — PS call graph, HOT/MEDIUM/COLD ranking |
+| `Kritical.Lens.PSGraph` | YES (always runs) | 5 PowerShell file(s) — PS call graph, HOT/MEDIUM/COLD ranking |
 | `Kritical.Lens.SqlMiner` | YES (always runs) | 0 .sql file(s) + embedded SQL in any language |
 | `Kritical.Lens.CompareAndBounce` | YES (always runs) | semantic-vs-raw-vs-SQL delta |
 | `Kritical.Lens.CodeGraph` | NO — skipped | no app.json in this repo — analyzer SKIPS by design, this is not a failure |
 | `Kritical.Lens.ALDependencyMatrix` | NO — skipped | no app.json in this repo — analyzer SKIPS by design, this is not a failure |
 | `Kritical.Lens.SchemaCompleteness` | NO unless -InventoryPath + -ModuleDir supplied | M365DSC schema analyzer; never runs from a bare sweep |
-| `Language.JS` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguageJS.mjs |
+| `Language.JS` | runs, 0 files here | node CLI present |
 | `Language.Liquid` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguageLiquid.mjs |
 | `Language.CSS` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguageCSS.mjs |
 | `Language.Bash` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguageBash.mjs |
 | `Language.HTML` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguageHTML.mjs |
 | `Language.CMD` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguageCMD.mjs |
 | `Language.CSV` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguageCSV.mjs |
-| `Language.JSON` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguageJSON.mjs |
+| `Language.JSON` | NO — no analyzer entry | **BLIND SPOT: 1 file(s) in this repo are unanalyzed** |
 | `Language.Python` | NO — no analyzer entry | ingest-only src; no Invoke-KriticalLensLanguagePython.mjs |
 | `Language.CSharp` | NO — not in the sweep default set | ingest-only src; not in the Language sweep default set |
 | `Language.AzPac` | NO — not in the sweep default set | PowerShell module (not node); not in the Language sweep default set |
@@ -80,8 +80,10 @@ language or domain in this repo.
 
 | Kind | Files |
 | --- | --- |
+| JSON | 1 |
 | Markdown | 1 |
-| **all tracked-ish files (excl. .git/node_modules/bin/obj/dist)** | **2** |
+| PowerShell | 5 |
+| **all tracked-ish files (excl. .git/node_modules/bin/obj/dist)** | **9** |
 
 ### Read these instead of grepping source
 
@@ -106,11 +108,11 @@ Documents in `docs/`:
 
 <!-- END KRITICAL-LENS-INDICES -->
 
-<!-- BEGIN KRITICAL-SWARM-TRACKING v1 src=a195aab7ac7a — GENERATED from RULE ZERO + RULE ZERO-B in C:\Users\joshl\.claude\CLAUDE.md by Kritical.Lens/scripts/Update-KritRepoSwarmTrackingBlock.ps1. DO NOT HAND-EDIT INSIDE THESE MARKERS: edit the source file and re-run the propagator. -->
+<!-- BEGIN KRITICAL-SWARM-TRACKING v1 src=90c9d7de688c — GENERATED from law tokens KRIT-GLOBAL-027, KRIT-GLOBAL-028, KRIT-GLOBAL-025, KRIT-GLOBAL-024, KRIT-GLOBAL-026 in C:\NoOneDrive\Github\Kritical.GreatWhite.Control.EngineeringSystem\law-tokens (cited from C:\Users\joshl\.claude\CLAUDE.md) by Kritical.Lens/scripts/Update-KritRepoSwarmTrackingBlock.ps1. DO NOT HAND-EDIT INSIDE THESE MARKERS: edit the token file and re-run the propagator. -->
 # 🔴 SWARM TRACKING + RULE ZERO (propagated — one authority, do not hand-edit)
 
-> This section is **generated**. The single authority is `RULE ZERO` + `RULE ZERO-B` at the
-> top of `C:\Users\joshl\.claude\CLAUDE.md`. Anything you change here is overwritten on the next run.
+> This section is **generated** from law tokens `KRIT-GLOBAL-027`/`KRIT-GLOBAL-028`
+> in the token store at `C:\NoOneDrive\Github\Kritical.GreatWhite.Control.EngineeringSystem\law-tokens`, cited from `C:\Users\joshl\.claude\CLAUDE.md`. Anything you change here is overwritten on the next run.
 > Re-propagate: `pwsh "<Github>/Kritical.Lens/scripts/Update-KritRepoSwarmTrackingBlock.ps1"` · Drift check (exits non-zero): `-Check`
 
 ## 🔴 The three commands — run them from disk, never from memory
@@ -137,193 +139,6 @@ is how work gets duplicated or silently clobbered. Check `git status` and the ag
 ## RULE ZERO — one line
 
 **RULE ZERO in one line: READ THE INDEX AND THE DOCS BEFORE YOU CLAIM A THING DOES NOT EXIST.** You do not get to say a thing does not exist — only that you looked, where, and what you found. 4 false absence-claims in one session: *"No PowerShell semantic Lens ingester exists anywhere in th...* · *`UNDECLARED` read as "not built."* · *"`.github/workflows/` DOES NOT EXIST."* · *`Kritical.Lens.QAArsenal`.*.
-
----
-
-## Verbatim source — RULE MINUS-TWO (CHECK THE ENGINEERING SYSTEM BEFORE + AFTER EVERY TURN)
-
-*(copied byte-for-byte from the authority above so this copy cannot drift from it)*
-
-# RULE MINUS-TWO — CHECK THE ENGINEERING SYSTEM BEFORE AND AFTER THE TURN. EVERY TURN.
-(Operator 2026-08-13: "the check before and after in every single turn against the engineering system is the number one priority ... everything else is a secondary parallel.")
-
-Number one priority — everything else in this file is secondary. Sits above shopify.dev because it governs whether the estate can see itself, not what to build. Shopify.dev remains law for Shopify questions; this rule governs the turn itself.
-
-## The contract — two checks, both mandatory, both against the ES
-
-BEFORE the turn — design-conformance check: ask the ES what exists, what is claimed, what is in flight, and what the declared design says, before building anything. Do not start from memory, the last summary, or a sibling lane.
-
-AFTER the turn — built-vs-designed check: compare what was built against the architecture and design, and record it. Operator's stated order: 1 ES vs architecture/design → 2 the task as asked → 3 quality → 4 anything outstanding → 5 done/partly done → 6 which agent → 7 how long → 8 was it good → 9 cost.
-Full spec: `C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical.GreatWhite.Control.EngineeringSystem\docs\TURN-RECEIPT-EVALUATION-ORDER-20260813.md`
-
-`NOT-CHECKED` is a required, valid value and must NEVER render as conformance. Unchecked ≠ passed. A turn that could not reach the ES says so, in the same breath as its result.
-
-## THE OPERATING LAW PACK — `Kritical.OperatingLaw` IS LAW, MUST BE LOADED EVERY WAVE
-(Added 2026-08-13 after an agent worked a full day not knowing this repo existed.)
-
-`C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical.OperatingLaw\` is the estate's operating-law repo (operator 2026-08-03: "the LAW that every wave and pass must call it"). A wave that did not read this pack has not started.
-- START HERE: `...\Kritical.OperatingLaw\THE-LAW-EVERY-WAVE-MUST-CALL-THIS.md`.
-- Also in it: `estate\CLAUDE.md` (propagated global rules) · `vault\CLAUDE-LAW0.md` · `registers\SCHEDULED-TASKS.md` (estate scheduled-task register — 15 tasks, 11 FAILING as of 2026-08-03) · `registers\STALLED-SWARM-PARK-REGISTER-*` · `manuals\` · `skills\shopify-dev-law\`.
-- Its own top-two warnings: (1) the shop provides the credential end-to-end — "operator must regenerate the tokens" is always wrong; (2) your skills may not be loaded — on thegrid-claude, `CLAUDE_CONFIG_DIR` points elsewhere and estate skills (incl. `shopify-dev-law` = Law 0) are not loadable; run `...\Kritical.OperatingLaw\tools\Sync-KritSkillsToConfigHome.ps1` and confirm in-session (a "SYNCED" print is necessary, not sufficient).
-
-## THE ENVIRONMENT / SERVICE / PORT PLAN — CANONICAL, DO NOT RE-DERIVE
-(Added 2026-08-13; already existed, an agent nearly rebuilt it. Authority: `C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical.AISupervisor.NodeJS\CLAUDE.md` — 6-service SCM graph, operator-confirmed. Environments: `Kritical-ShopifyVault\CLAUDE.md` LAW 0(c).)
-
-ALL DEV RUNS ON THE W365 BOX — off Stacktrace (operator 2026-08-13). Stacktrace is orchestration/agent workstation only, hosts no environment. Any older line saying "DEV runs locally on stacktrace, ports 4320-4324" is SUPERSEDED — those ports are DEV on the box. Nothing about DEV may depend on the laptop being on.
-
-The three environments are separate — never muddle them, never share a credential, port, DB, storage account, or app registration across them.
-
-### DEV (build+prove) — W365 box `CPC-Joshu-5919S`, not stacktrace
-- Surfaces/services: 4320–4324 SCM graph, on the box, bound `127.0.0.1`, reachable from stacktrace over Tailscale only (`100.94.243.73`).
-- Engine/pwsh: the box. Shopify org: `208204138` (joshua.finley).
-- Never touches prod data, storage, or the prod Shopify org.
-
-### TEST (prove shipping surface) — cloud + box
-- App surface: `func-kritical-app-test` — Azure Functions Linux Consumption, no local port.
-- Shopify app: `Kritical Vault - Testing`, client_id `c7be452e…`, app `403232555009`, org `208204138`. Second set: PROD-org test app `261ae89d…` (app `410066026497`, org `218255268`) also points here.
-- Engine/pwsh: W365 box. Storage/leases: `stkriticalapptest` / `ShopifyAccessLeasesTest`.
-- Stores: `kritical-1234`, `kritical-9765`, `clone-kriticalrestoretesting27jul2026-0812am`.
-
-### PROD (sell) — cloud + box
-- App surface: `func-kritical-app` — Azure Functions Linux Consumption, no local port.
-- Shopify app: `Kritical Vault`, client_id `fd1e406f…`, app `403160858625`, org `208204138`; segregated non-commission set `6d9adef2…` (app `410065698817`, org `218255268`, pax8tod365 identity).
-- Engine/pwsh: W365 box. Storage/leases: `stkriticalappprod` / `ShopifyAccessLeasesProd`.
-- Store: `kriticalptyltd`. Never restore INTO prod without explicit operator authorization.
-
-Azure Functions Linux Consumption has no pwsh and cannot have one — every engine op (backup, restore, clone, licence) runs on the box, every environment. The QUEUE is the only production transport to the box (runner polls outbound); WinRM (HTTPS 5986, not 5985) and SSH (53124) are tailnet-only admin/diagnostic paths for an engineer, never a product mechanism.
-
-ALL DATABASES OFF STACKTRACE TOO — on the W365 box (operator 2026-08-13). `KriticalBrain` (+`_Dev`/`_Test`/`_Prod`) and every `KritLens_<repo>` raw-corpus DB belong on the box, not the laptop's `.\SQLEXPRESS`. Stacktrace hosts no DB, environment, or service. Cross-machine access is Tailscale-scoped; SQL must listen on loopback/Tailscale, never `0.0.0.0` (see live defect below). Re-homing is tracked work, not done — treat "Lens SQL is on SQLEXPRESS locally" as legacy.
-
-Canonical ports — machine-readable authority: `C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical.NET.ServiceControlManager\src\service-registry.json` (VERIFIED 2026-08-13). All bound `127.0.0.1`, never `0.0.0.0`. Edit the registry, not prose.
-| Port | Registered service |
-|---|---|
-| 4320 | `KriticalNodeJSWebServer-Master` — SCM control plane (REST+MCP+metrics, bearer-authed, native .NET) |
-| 4321 | `KriticalNodeJSWebServer-SupervisorAPI-4321` — SUPERVISOR, never start/restart/drive |
-| 4322 | `KriticalNodeJSWebServer-VaultBackend-4322` |
-| 4323 | `KriticalNodeJSWebServer-BackupShell-4323` (code comments call it "vault-frontend" — registry/code naming conflict, unresolved) |
-| 4324 | `KriticalNodeJSWebServer-ConnectorAdmin-4324` |
-| 4330 | `KriticalMSShowcase-ControlPlane` |
-| 4610 | `KriticalGreatWhiteEngineeringSystem-MCP-4610` — ES MCP server |
-| — | `KriticalNodeJSWaveRunner-SupervisorLoop` (no port) — SUPERVISOR, never start |
-Running but unregistered — register or they collide: 4325 Vault queue-runner health (`HEALTH_PORT`) · 4331 MSShowcase portal · 4350 Kritical-ShopifyVault app (`VAULT_APP_PORT`) · 4612 AgentBridge MCP · 4199 SCX agentic shim · 4611 ES MCP over SSH tunnel.
-
-### Every service has three instances — DEV, TEST, PROD. Contract already exists, do not re-derive.
-(Operator 2026-08-13: "every last service now has a dev and test and prod instance ... entirely defined." Corrected same day 22:00 AEST — an agent invented a `base/+100/+200` scheme while the real, built, tested, committed contract already existed; that invention deleted.)
-
-Authority — machine-readable, schema-validated, Pester-proven (9/9, planted-negative): `C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical-ShopifyVault\config\vault-two-host-service-port-contract.json` · module `...\scripts\deploy\KritVaultTwoHostServicePortContract.psm1` · tests `...\Test-VaultTwoHostServicePortContract.Tests.ps1` · lane doc `...\docs\lanes\two-host-service-port-contract-20260811\README.md`. Committed `80ef739` (2026-08-11), carried through `ed32a18` (PR #26). Edit the JSON, not this prose.
-
-Allocation (six services × three environments):
-| Service | DEV | TEST | PROD |
-|---|---|---|---|
-| master (SCM control plane) | 4320 | 35020 | 56020 |
-| supervisor-api — NEVER START | 4321 | 35021 | 56021 |
-| vault-backend | 4322 | 35022 | 56022 |
-| backup-shell | 4323 | 35023 | 56023 |
-| connector-admin | 4324 | 35024 | 56024 |
-| licence-authority | 4325 | 35025 | 56025 |
-- `listenerPolicy` per entry: `owned-healthy` (named ownerService must hold it) or `must-be-free`.
-- DEV `exposeOnTailscale:false`; TEST/PROD `exposeOnTailscale:true`.
-- RESOLVED 2026-08-13: contract declares host `CPC-Joshu-5919S` (W365 box) for dev/test/prod, not Stacktrace — closes the prior STACKTRACE-vs-W365 conflict. Stacktrace appears in the contract's `hosts` block only as `role: "orchestration-workstation"` — no environment, expectedServices, or DB. Port families unchanged (DEV 4320-4325 / TEST 35020-35025 / PROD 56020-56025) — only host moved. Pester suite updated in lockstep, re-proven 10/10 GREEN against the new host, including a dedicated test asserting every environment binds to `CPC-Joshu-5919S` not `STACKTRACE`.
-- CONFIG CHANGE ONLY — NOT YET APPLIED ON THE BOX. Ground truth 2026-08-13: box has ZERO of the six-service SCM graph installed (`C:\ProgramData\Kritical\scm\` doesn't exist there — only Stacktrace has the real `kritical-scm.exe` package); only ONE of eight named services (`KriticalNodeJSService-VaultQueueRunner`) registered on the box. Re-homing DEV/TEST/PROD to the box needs a genuine install step — tracked, not done — before `Install`/`Set`/`Repair -Apply` can run there.
-
-NEVER APPLIED — ports are genuinely stealable right now. `-Apply` never run on either machine (no `Kritical-Vault-*` firewall rules, no `C:\ProgramData\Kritical\rollback` receipts). Measured 2026-08-13: Stacktrace's TCP dynamic range is 1024-64511, so DEV 4320-4325 and PROD 56020-56025 sit inside it and can be taken at boot. TEST 35020-35025 is only accidentally covered by a non-contract exclusion (`35013-35112`, shape suggests Hyper-V/Docker NAT) — not our protection, can evaporate. W365's dynamic floor is 49152, so 4xxx is incidentally safe there. Reserve with `netsh interface ipv4 add excludedportrange protocol=tcp` (module does this one port at a time, writes an immutable rollback receipt). `-Apply` is deliberately local-only (refused remotely).
-
-Known collisions / contested ports (unresolved):
-- 4326 claimed TWICE, two unaware lanes: `Kritical.NodeJS.EstateConsole\src\server.js:19` (2026-07-13) and `Kritical-ShopifyVault\docs\DESIGN-VAULT-MCP-SERVER-20260809.md:42` (`VAULT_MCP_PORT`).
-- 4325 contested: contract calls it `licence-authority` (designed, never built) vs live `KriticalNodeJSService-VaultQueueRunner` — estate's own design doc records this unresolved.
-- 4323 naming drift: registry says `BackupShell`, running code calls itself `VaultShell`/"Vault frontend" — one port, three names.
-
-Also registered (SCM allow-list): 4330 MSShowcase control plane · 4610 ES MCP. Running but unregistered: 4325 queue-runner health · 4331 MSShowcase portal · 4350 Vault app · 4612 AgentBridge MCP · 4199 SCX shim · 4611 ES MCP over SSH tunnel.
-
-- Instances are fully separate: own port, config, credentials, DB, storage account — never shared, never "same service with a flag."
-- Applies to services either agent (Claude or Codex/ChatGPT) stood up on either box. Ad-hoc services collide — found one unregistered? Add it to the contract, never leave it squatting.
-- Enforcement: a gate failing when a service binds outside its allocation or lacks an instance. The contract's own Pester suite is the model (proven RED before GREEN).
-
-Live ground-truth defects (measured 2026-08-13, fix before trusting the plan):
-- Redis listening on `0.0.0.0:6379` on stacktrace — not loopback, not in any plan. Exposure risk.
-- SQL Server on the W365 box listens on `0.0.0.0:49473` (dynamic, IPAll), no Tailscale-scoped firewall rule — currently unreachable only because the Public-profile default-deny blocks it; neither secured-by-design nor usable. Precedent for the fix: commit `316067b` rebound the MCP server to 127.0.0.1 explicitly.
-- `4322`/`4323`/`4324` registered but STOPPED (never started since boot).
-Rule: a new service does not pick a port — it is allocated one here, binds loopback, is registered. Anything binding `0.0.0.0` is a finding, not a style choice (RULE ZERO-C).
-
-## KEEP THE LAW TERSE — PROFANITY STRIPPED PROGRAMMATICALLY, MEANING NOT
-(Operator 2026-08-13: "to save tokens we should programmatically strip the swearing from claude.mds ... in the ps.toolkit.")
-
-These files reload every turn in every repo (95+ copies) — every wasted word is paid for repeatedly. Profanity in quoted operator directives carries emphasis, no information — removed by tool, never by hand: `Kritical.PS.Toolkit` → `Invoke-KritDocProfanityStrip`.
-- Meaning and intent preserved — the directive still says what he decided and why; only the expletive drops. Never paraphrase, soften, or summarise his actual instruction.
-- Strip the source, then re-broadcast: edit `C:\Users\joshl\.claude\CLAUDE.md` and each repo's own authored sections, then re-run the propagator. Never hand-edit generated blocks.
-- Never touch `docs\human\` (hand-authored) or anything FROZEN/SUPERSEDED/ARCHIVED, or `Github-SecretsOutsideOfGitRepos`.
-- Every run keeps a reversible archive of originals + a receipt (what changed, tokens saved).
-
-## PRESERVATION IS NOT DISPOSITION — SAVE IT, THEN DECIDE IT. NEVER ABANDON IT.
-(Operator 2026-08-13: preserve branches when needed to save data, but don't abandon — mark archive/merge/whatever the disposition was.)
-
-Saving and DECIDING are different jobs; stopping after saving is its own failure mode. A `preserve/*`, `salvage/*`, `rescue/*`, `wip/*` branch pushed "so nothing is lost" and never revisited is deferred confusion, not safety. Dozens already exist estate-wide and nobody can say which hold live work.
-
-Every preserved artefact gets a DISPOSITION, recorded in the same pass that preserves it:
-| Disposition | Means | Action |
-|---|---|---|
-| MERGE | content still wanted | merge to canonical branch (operator decision if diverged) |
-| ARCHIVE | superseded, keep history | tag (`archive/<name>-<date>`), record why + what superseded it, may then be removed from active list |
-| SUPERSEDED-SAFE-TO-DROP | content provably already on canonical branch | prove via `git cherry`/`git log --cherry-mark`, record the proof |
-| UNDECIDED | genuinely needs the operator | VALID entry — write down the specific question |
-- Disposition lives in the repo's own status authority, never only a chat reply.
-- Never delete a branch to "tidy up" — disposition is a decision record, not licence to prune. ARCHIVE = tag-and-record, not remove.
-- Order fixed: PRESERVE FIRST, DECIDE SECOND. A pending decision never delays getting bytes safe; getting bytes safe never substitutes for the decision.
-
-## THREE DETECTORS THAT LIED — EARNED 2026-08-13. PROVE THE DETECTOR RAN BEFORE BELIEVING IT.
-All three produced confident wrong answers within hours of each other. An empty result is evidence the detector produced nothing, not evidence of absence.
-
-1. RETRACTED 2026-08-14 — the propagator was fine; MY VERIFICATION was the broken detector. Claimed all night `Update-KritRepoSwarmTrackingBlock.ps1` reported "95 file(s) written" and wrote nothing, told the operator not to trust any repo's CLAUDE.md. FALSE — re-verified with a path-safe search: content present in 88 files, broadcast landed. Actual defect: `grep -l "phrase" $(cat filelist)` word-splits on spaces, and every path in this estate contains them (`C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\...`) — paths shattered at `OneDrive`, ` - `, `Kritical`, `Pty`, `Ltd`, grep matched nothing, 0 was misread as "broadcast failed" and escalated into the law itself. Rule: every path in this estate contains spaces — any shell construct that word-splits an unquoted path returns a silent false negative (`$(cat list)`, unquoted `$var`, bare `for f in $(...)`); use ripgrep-backed Grep, `rg --files-from`, or quote every expansion. A 0-result from a space-containing path is a broken query until proven otherwise. Meta-lesson: before believing a detector says something is broken, prove the detector ran correctly — applied to the propagator, the box's git, the reparse points, but not to my own grep. Verify a negative result the same way as a positive one; a broadcast is proven at the destination, never by the sender, but the destination check must itself be sound.
-
-2. A hollow OneDrive placeholder read as a destroyed repo, twice mis-diagnosed. `Github\Kritical.Lens.Toolkit` and `Github\Kritical.SCXCode` show `Mode: l----`, `Attributes: Directory, ReparsePoint`, contain only a dehydrated `.git\index`, `.LinkType`/`.Target` are null. A scan called them destroyed and told the operator his estate was wiped — they are OneDrive Cloud-Files PLACEHOLDER directories, neither corrupted nor NTFS junctions. Discriminator is the raw reparse tag, not `Get-Item`: `fsutil reparsepoint query "<path>"` → `0x9000*01a` = OneDrive placeholder (`0x9000e01a` in-sync, `0x9000601a` not-fully-synced); `0xA0000003` = real junction, `0xA000000C` = symlink (non-null `.Target`). A null Target on a ReparsePoint is ambiguous — resolve the tag, never assume; the tag alone doesn't prove brokenness either (a control folder carried the identical rare tag with 9 healthy children — only a content check decides). Measured estate-wide: 53,100 reparse points, 52,921 ordinary OneDrive placeholders, 179 genuine NTFS junctions (178 healthy), 87 git worktree/submodule `.git`-as-file constructs (60 submodules — the whole `Kritical.Lens\components\*` tree — all resolving). Genuinely broken estate-wide: 3. Lens is a submodule superproject — real content lives at `Kritical.Lens\components\<kind>\<name>` (Toolkit 283 files under `data-infra`, SCXCode 464 files under `external-lineage`); a top-level `Github\<name>` dir of the same name is often just a hollow placeholder — check the submodule path before panicking.
-
-3. Git silently refusing every command on the W365 box. A sweep of 266 repos returned ZERO hits — git refused every call with "dubious ownership" (repos owned by `AzureAD\JoshuaFinley`, running as `vault-service`). The scan looked clean; git had never run. Fix: `git config --global --add safe.directory '*'` for that account. Any git-based conclusion about the box made before that fix is a false negative — re-run it.
-Genuinely broken and worth fixing (found by the census): `KRTPax8ToShopifyConnector\scripts\shopify-brain` → `Github\ShopifyBrain` — dangling junction, target doesn't exist. `KRTPax8ToShopifyConnector\scripts\scxcode` resolves but points at the hollow placeholder.
-
-## TRACK THE BABBLE AGAINST THE ARCHITECTURE — PROGRAMMATICALLY, START AND END OF EVERY TURN
-(Operator 2026-08-13: talk to the ES at start and end of turn, tracking any of the agent's babble against the architecture and design, programmatically.)
-
-Talking to the ES at start and end of every turn is not optional narration — every claim the agent makes in a turn is checked, BY CODE, against the architecture/design held in the ES.
-- ES is where ALL design/architecture is read from — not memory, last summary, or sibling lane. Read design from ES → write code matching its stated requirements → check the built result against it before the turn ends.
-- The check is mechanical, not self-reported — an agent grading its own output is the failure mode this replaces. Interception design (hooks that inject per message, deny per tool call): `...\Kritical.GreatWhite.Control.EngineeringSystem\docs\ES-DEVIATION-INTERCEPTION-DESIGN-20260813.md`.
-- Proven pattern already working: `guard_bash.py` (blocks destructive git) and the repo-lease guard (refuses a commit without `KRIT_LANE_ID`) both stopped real deviations by REFUSING the action. Every deviation class gets a rule of that shape, never a paragraph asking the agent to remember.
-
-## Why this rule exists — the measured failure
-The ES has been asked for, for days, repeatedly reported delivered while structurally incapable. Each proven by an adversarial refuter, not guessed:
-- Write path is dead: `create_task` returns `cannot pull with rebase: You have unstaged changes` — `pullLatest()` rebases against a dirty tree; `persist.mjs`'s own comment admits this blocks writes "almost always in this repo."
-- Evidence rule has an open back door: `close_task` correctly refuses to close without `evidenceRef`; `update_task {"status":"done"}` closes with none.
-- Code pushed a full day before the process that would serve it: `tools/list` served 7 tools while source declared 13. Writing and pushing code is not shipping it.
-- ~~An orphaned lease bricks all writes — `acquireRepoLease` never checks holder liveness~~ FIXED, verified 2026-08-21, this claim is now STALE. Defect D7 closed: `acquireRepoLease` (`mcp-server\src\ledger.mjs`) checks PID + process start time (Windows reuses PIDs) and reclaims an orphan automatically, logging `RECLAIMING ORPHANED LEASE`. Regression suite `mcp-server\test\repo-lease-liveness-reclaim.test.mjs` runs 4/4 GREEN with two negative controls (does not reclaim from a genuinely-live holder; does not reclaim on a malformed PID — fails closed). The PowerShell lease self-heals too, independently: `Enter-KritRepoLease` warns and reclaims an expired lease, proven against a planted 82.7-hour-expired dead-holder lease. Two separate lease implementations, both reclaimable.
-- Turn-receipt tool fabricated a measurement: `durationMinutes` was `Math.round(Math.random() * 60)`, system never run once.
-- SessionStart hook reports "server unreachable" against a live, reachable server and injects nothing.
-
-Pattern: a thing never checked before and never verified after gets reported done and is not.
-
-## What this means operationally
-- A turn that did not check the ES is not finished, regardless of output.
-- The check must be structural, not remembered — hooks/gates/connectors are the mechanism, but a hook that lies is worse than no hook; every mechanism ships with its own proof it goes RED.
-- Read-write, not read-only — a system of record you cannot write to is a report; `create_task`/`update_task`/`close_task` must work end to end against the LIVE server, not sandbox-only.
-- Live defect register: `C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical.GreatWhite.Control.EngineeringSystem\docs\WRITE-PATH-DEFECTS-AND-FIXES-20260813.md`, `C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical.GreatWhite.Control.EngineeringSystem\docs\TURN-RECEIPT-DEFECTS-20260813.md`.
-
----
-
-## Verbatim source — RULE MINUS-1.75 (THE ES FORCES BEHAVIOUR IN CODE, NOT INFERENCE)
-
-*(copied byte-for-byte from the authority above so this copy cannot drift from it)*
-
-# RULE MINUS-1.75 — THE ES FORCES BEHAVIOUR IN CODE VIA THE AGENT'S OWN INTEGRATION POINTS. NOT INFERENCE.
-(Operator 2026-08-13. End-state of RULE MINUS-TWO: stop relying on the agent to remember — make the ES force it programmatically through connectors/plugins/hooks/MCP/SDK/APIs, not tokens.)
-
-Every mandatory behaviour in this file — RULE MINUS-TWO before/after checks, the delegation contract, the gates, the repo lease, reading the docs, using the SCM — must ultimately be ENFORCED BY THE ENGINEERING SYSTEM IN PROGRAMMATIC CODE, driven through the agent's own integration points, not inference, tokens, or interpretation of any kind. Every "documented but forgotten" failure (SCM, ES check, token architecture) proves prompt-and-hope does not hold. The fix is never a louder prompt; it is code that forces the behaviour.
-
-## MANDATORY when touching ANY integration point (connector/plugin/hook/MCP/SDK/API)
-1. Enumerate before you use — Lens-map the integration point's real surface (cheap Haiku agents cataloguing every method/tool/hook/event Claude AND ChatGPT expose). Never guess; check what's already mapped (plugin-template/connector-adoption work exists) and extend it (RULE ZERO).
-2. Force it programmatically, don't prompt-and-hope — if a behaviour can be driven by the ES via an API/hook/connector, wire it that way. A prompt the agent may ignore is the last resort.
-3. The SCM is the model of this done right ([[scm-service-control-manager-delegated]] — bearer-authed REST+MCP control-plane the ES drives by API). Every new integration follows that shape: real API, real auth, real allow-list, real code.
-4. Record it in the ES as business-as-code (contract/skill/template), never as a chat message.
-
-## THE PROGRAMME (design first, then build — captured, not lost)
-Lens over Claude's AND ChatGPT's complete API/integration surface → catalog in the ES → the ES programmatically drives the agents and forces the RULE MINUS-TWO behaviours in code. Skill: `C:\Users\joshl\.claude\skills\es-integration-programmatic-drive\SKILL.md`. Design+programme: `C:\Users\joshl\OneDrive - Kritical Pty Ltd\Github\Kritical.GreatWhite.Control.EngineeringSystem\docs\ES-PROGRAMMATIC-DRIVE-INTEGRATION-POINTS-DESIGN-20260813.md`. Until built, this section is the standing reminder.
 
 ---
 
@@ -529,3 +344,20 @@ Width: up to 75 concurrent is pre-authorised, but the harness caps concurrency n
 Never leave a swarm to die quietly — keep a final task open, append the next phase into it, close deliberately when genuinely done.
 
 <!-- END KRITICAL-SWARM-TRACKING -->
+
+<!-- BEGIN KRITICAL-DOC-INDEX v1 repo=Kritical.PS.Pax8Mcp hash=801f6ab28877 — GENERATED by Kritical.Lens/scripts/Build-KritRepoDocIndex.mjs, embedded by Kritical.Lens/scripts/Update-KritRepoSwarmTrackingBlock.ps1. DO NOT HAND-EDIT: fix the generator (or add docs/DOC-INDEX-NOTES.md for known contradictions) and re-run the propagator. -->
+# 🔴 DOCUMENT INDEX for this repo (propagated — generated, do not hand-edit)
+
+**Authoritative documents for `Kritical.PS.Pax8Mcp`** — generated, never hand-edited.
+
+Selection rule v1 (see `Kritical.Lens/scripts/Build-KritRepoDocIndex.mjs` header for the full text): root `README/CLAUDE/AGENTS.md` + docs named by the repo's OWN root CLAUDE.md/AGENTS.md + `docs/*.md` top-level named DESIGN/ARCHITECTURE/SPEC/CONTRACT/RFC/MASTER-STATUS/MASTER-COMPLETION-PLAN/FINDINGS-REGISTER + canonical status files + anything referenced by a `*Gate*` script. **Excludes** `docs/status/archive/`, `docs/lanes/`, any `archive/_attic/snapshot/backup/deprecated` path, and everything not at `docs/` top level unless gate-referenced, self-declared, or a canonical status file — those are NOT indexed here.
+
+| Document | Purpose | Last modified | Rule | Supersession |
+|---|---|---|---|---|
+| `AGENTS.md` | Kritical.PS.Pax8Mcp — AGENTS.md | 2026-08-25 | R1-root-entry | — |
+
+Known contradictions/resolutions: none declared (add to `docs/DOC-INDEX-NOTES.md` if two docs disagree and one has been resolved as authoritative).
+
+Regenerate: `node "<Github>/Kritical.Lens/scripts/Build-KritRepoDocIndex.mjs" --repo <this-repo> --markdown` (embedded automatically by `Update-KritRepoSwarmTrackingBlock.ps1`).
+<!-- END KRITICAL-DOC-INDEX -->
+
